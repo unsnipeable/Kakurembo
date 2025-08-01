@@ -1,0 +1,24 @@
+name: HideAndSeek
+version: '${version}'
+main: matanku.kakurembo.HideAndSeek
+api-version: 1.21
+author: a
+commands:
+  countdown:
+    permission: op
+    permission-message: §cYou don't have permissions to run that command!
+  disguiseselect:
+  roleselect:
+  setlobby:
+    permission-message: §cYou don't have permissions to run that command!
+    permission: op
+  settings:
+    permission: op
+    permission-message: §cYou don't have permissions to run that command!
+  stopdisguise:
+    permission: op
+    permission-message: §cYou don't have permissions to run that command!
+  stoptask:
+    permission: op
+    permission-message: §cYou don't have permissions to run that command!
+depend: [DiamondAPIFork]
