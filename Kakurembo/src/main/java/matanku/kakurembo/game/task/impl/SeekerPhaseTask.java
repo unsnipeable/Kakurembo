@@ -3,6 +3,7 @@ package matanku.kakurembo.game.task.impl;
 import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.HideAndSeek;
+import matanku.kakurembo.api.util.Symbols;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
@@ -77,32 +78,36 @@ public class SeekerPhaseTask extends GameTask {
                     }
                     Map.Entry<GamePlayer, Double> minEntry = trackerMap.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
                     if (!(minEntry == null)) {
-                        entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int)Math.ceil(minEntry.getValue()) + "m"));
+                        entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int)Math.ceil(minEntry.getValue()) + "m <reset><white>Health: <red><bold>" + (int)(Math.ceil(minEntry.getKey().getPlayer().getHealth()*10)/10) + Symbols.HEALTH));
                     }
                 }
-            }
 
-            if (!game.getSettings().isHeartBeatEnabled()) return;
-            for (GamePlayer hider : game.getPlayers().values()) {
-                if (hider.getRole() == GameRole.HIDER) {
-                    if (entry.getValue().getRole() != GameRole.SEEKER) continue;
-                    double distance = entry.getValue().getPlayer().getLocation().distance(hider.getPlayer().getLocation());
-                    if (distance <= 8) {
-                        if (!(distance <= 4)) {
-                            entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(),Sound.ENTITY_WARDEN_HEARTBEAT,0.8f,0.6f);
-                        } else {
-                            new BukkitRunnable() {
-                                int count = 0;
-                                @Override
-                                public void run() {
-                                    if (count >= 2) {
-                                        this.cancel();
-                                        return;
-                                    }
-                                    entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.8f, 1.4f);
-                                    count++;
+                if (game.getSettings().isHeartBeatEnabled()) {
+                    for (GamePlayer hider : game.getPlayers().values()) {
+                        if (hider.getRole() == GameRole.HIDER) {
+                            double distance = entry.getValue().getPlayer().getLocation().distance(hider.getPlayer().getLocation());
+                            HideAndSeek.getINSTANCE().getLogger().info("WOOO " +distance);
+                            if (distance <= 8) {
+                                if (!(distance <= 4)) {
+                                    entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.8f, 0.6f);
+                                    HideAndSeek.getINSTANCE().getLogger().info("8block inai");
+                                } else {
+                                    new BukkitRunnable() {
+                                        int count = 0;
+
+                                        @Override
+                                        public void run() {
+                                            if (count >= 2) {
+                                                this.cancel();
+                                                return;
+                                            }
+                                            HideAndSeek.getINSTANCE().getLogger().info("4block inai");
+                                            entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.8f, 1.4f);
+                                            count++;
+                                        }
+                                    }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);
                                 }
-                            }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);
+                            }
                         }
                     }
                 }

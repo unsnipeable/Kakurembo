@@ -36,7 +36,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(0, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "<green>ロールを選択";
+                return "ロールを選択";
             }
 
             @Override
@@ -133,7 +133,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public String getOptionName() {
-                return "<green>サーバーの途中参加";
+                return "サーバーの途中参加";
             }
 
             @Override
@@ -156,7 +156,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(4, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "<green>完全でないブロックに変身";
+                return "完全でないブロックに変身";
             }
 
             @Override
@@ -190,7 +190,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(5, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "<green>アンチチート";
+                return "アンチチート";
             }
 
             @Override
@@ -267,7 +267,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(7, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "<green>心臓の音";
+                return "心臓の音";
             }
 
             @Override
@@ -296,7 +296,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(8, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "<green>トラッカー";
+                return "トラッカー";
             }
 
 
@@ -325,7 +325,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(16, new Button() {
             @Override
             public String getOptionName() {
-                return "<green>プレイヤーのロールを変更する";
+                return "プレイヤーのロールを変更する";
             }
 
             @Override
@@ -346,7 +346,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(17, new Button() {
             @Override
             public String getOptionName() {
-                return "<green>ゲームを開始する";
+                return "ゲームを開始する";
             }
 
             @Override

@@ -24,7 +24,7 @@ public class SetTrackerEnabledCommand implements CommandExecutor {
         if (args.length == 1 && Checker.isBoolean(args[0])) {
             SeekerPhaseTask.setTracker(Boolean.parseBoolean(args[0]));
 
-            Common.sendMessage(player, "<green>WOOO");
+            Common.sendMessage(player, "<green>success");
             return true;
         }
 
