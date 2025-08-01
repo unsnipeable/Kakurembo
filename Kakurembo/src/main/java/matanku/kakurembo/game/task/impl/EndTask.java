@@ -5,6 +5,7 @@ import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.BlockDisplay;
@@ -40,7 +41,8 @@ public class EndTask extends GameTask {
                 ""
         );
 
-        game.getBossBar().name("<green>ゲームオーバー! " + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
+
+        game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
         game.getBossBar().show();
 
         game.getGamePlayersBossBar().destroy();

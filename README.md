@@ -50,6 +50,8 @@ build
 
 以上の条件を満たしている場合、次の方法でインストールしてください。
 
+- BuildToolsでSpigot 1.21をコンパイルし、Kakurembo/KakuremboAPI/libs/にいれる
+
 - プロジェクトをコンパイル(build)する
 
 - サーバーの/pluginsに2つのjarを入れる

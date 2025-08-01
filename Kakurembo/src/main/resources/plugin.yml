@@ -21,4 +21,4 @@ commands:
   stoptask:
     permission: op
     permission-message: §cYou don't have permissions to run that command!
-depend: [DiamondAPIFork]
+depend: [api]

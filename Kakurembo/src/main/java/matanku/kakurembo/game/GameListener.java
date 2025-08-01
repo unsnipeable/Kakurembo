@@ -167,7 +167,7 @@ public class GameListener implements Listener {
                                 entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 255, true, false));
                                 gameDamager.setStanCooldown(60);
                             } else {
-                                Common.sendMessage(gameDamager.getPlayer(), "<red>⚠ あなたのスタンはクールダウン中です。" + (gameDamager.getStanCooldown()) + "秒後に使用してください!");
+                                Common.sendMessage(gameDamager.getPlayer(), "<red><bold>COOLDOWN! <!bold>あなたのスタンはクールダウン中です。" + (gameDamager.getStanCooldown()) + "秒後に使用してください!");
                                 event.setCancelled(true);
                             }
                         }
@@ -189,7 +189,7 @@ public class GameListener implements Listener {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
-        Common.broadcastMessage(gamePlayer.getRole().getColor() + player.getName() + "<red>は" + event.getAttacker().getName() +  "に倒され，" + GameRole.SEEKER.getColoredName() + " <red>になりました!");
+        Common.broadcastMessage("<red><bold>ELIMINATE! <!bold>" +gamePlayer.getRole().getColor() + player.getName() + "<red>は" + event.getAttacker().getName() +  "に倒され，" + GameRole.SEEKER.getColoredName() + " <red>になりました!");
 
         gamePlayer.getDisguises().getDisguise().stopDisguise();
         gamePlayer.setRole(GameRole.SEEKER);
@@ -303,6 +303,11 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.INSTANCE.getGame();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
+        if (!Items.TRANSFORM_TOOL.getItem().equals(itemStack) && block != null && block.getType().name().toUpperCase().contains("POTTED")) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (player.getGameMode() != GameMode.CREATIVE && action == Action.RIGHT_CLICK_BLOCK && block != null && block.getType() == Material.CHEST) {
             event.setCancelled(true);
             return;
@@ -319,7 +324,7 @@ public class GameListener implements Listener {
                             return;
                         }
 
-                        String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD"};
+                        String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER"};
                         for (String string : disallowedBlocks) {
                             if (block.getType().name().toUpperCase().contains(string)) {
                                 Common.sendMessage(player, "<red>あなたが固定しようとしたブロックは禁止されているブロックです！");
@@ -334,11 +339,42 @@ public class GameListener implements Listener {
                         Common.sendMessage(player, "<yellow>あなたは <aqua>" + block.getType().name() + "<yellow> に変身しました！");
                     } else if (itemStack.equals(Items.TELEPORT_TOOL.getItem())) {
                         Location blockLoc = player.getLocation().getBlock().getLocation().clone();
+                        System.out.println(blockLoc + ", block: " + blockLoc.getBlock().getType().name());
+                        Location blockLocSetBack = player.getLocation();
+
                         player.teleport(new Location(blockLoc.getWorld(), blockLoc.getX() + 0.5, blockLoc.getY(), blockLoc.getZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
-                        Common.sendMessage(player, "<yellow>正常に固定されました!");
+
+                        String[] disallowedBlocks = new String[]{"SIGN", "STAINED_GLASS", "CARPET"};
+                        String[] disallowedBlocks2 = new String[]{"STAINED_GLASS"};
+
+                        for (String string : disallowedBlocks) {
+                            if (block != null && blockLoc.add(0,-1,0).getBlock().getType().name().toUpperCase().contains(string)) {
+                                flag(gamePlayer, blockLocSetBack, game, player);
+                                return;
+                            }
+                        }
+                        for (String string : disallowedBlocks2) {
+                            if (block != null && blockLoc.getBlock().getType().name().toUpperCase().contains(string)) {
+                                flag(gamePlayer, blockLocSetBack, game, player);
+                                return;
+                            }
+                        }
+                        Common.sendMessage(player, "<green><bold>SUCCESSFULL! <!bold>正常に固定されました!");
                     }
                 }
             }
+        }
+    }
+
+    public void flag(GamePlayer gamePlayer, Location blockLocSetBack, Game game, Player player) {
+        gamePlayer.getPlayer().teleport(blockLocSetBack);
+        gamePlayer.setFlagged(gamePlayer.getFlagged()+1);
+        if (gamePlayer.getFlagged() >= 10) {
+            gamePlayer.getDisguises().getDisguise().stopDisguise();
+            gamePlayer.setRole(GameRole.SEEKER);
+            game.getMap().teleport(player);
+            player.getInventory().setContents(GameRole.SEEKER.getTools());
+            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が10回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
         }
     }
 

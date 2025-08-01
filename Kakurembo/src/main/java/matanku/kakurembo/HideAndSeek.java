@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Getter
 public final class HideAndSeek extends JavaPlugin {
 
+    @Getter
     public static HideAndSeek INSTANCE;
 
     private BasicConfigFile configFile;
@@ -33,7 +34,6 @@ public final class HideAndSeek extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GameListener(), this);
 
         this.getCommand("countdown").setExecutor(new CountdownCommand());
-        this.getCommand("disguiseselect").setExecutor(new DisguiseSelectCommand());
         this.getCommand("roleselect").setExecutor(new RoleSelectCommand());
         this.getCommand("setlobby").setExecutor(new SetLobbyCommand());
         this.getCommand("settings").setExecutor(new SettingsCommand());

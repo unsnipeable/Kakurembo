@@ -40,7 +40,7 @@ public class SeekerPhaseTask extends GameTask {
         game.getBossBar().name("<yellow>ハイダーは<aqua>" + Util.getTime(tick) + "<yellow>後に勝利します!").color(BossBar.Color.YELLOW).progress((float) tick / seconds);
         game.getBossBar().show();
 
-        String players = game.getPlayers().values().stream().map(gp -> (gp.getRole() == GameRole.HIDER ? "<red>" : "<blue>") + "<bold>" + gp.getPlayer() + "<reset><gray>").collect(Collectors.joining(", "));
+        String players = game.getPlayers().values().stream().map(gp -> (gp.getRole() == GameRole.SEEKER ? "<red>" : "<blue>") + "<bold>" + gp.getPlayer().getName() + "<reset><gray>").collect(Collectors.joining(", "));
         game.getGamePlayersBossBar().name(players);
         game.getGamePlayersBossBar().show();
 
