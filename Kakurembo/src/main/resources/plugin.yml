@@ -4,6 +4,9 @@ main: matanku.kakurembo.HideAndSeek
 api-version: 1.21
 author: a
 commands:
+  settrackerenabled:
+    permission: op
+    permission-message: §cYou don't have permissions to run that command!
   countdown:
     permission: op
     permission-message: §cYou don't have permissions to run that command!

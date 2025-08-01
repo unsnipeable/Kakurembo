@@ -11,6 +11,6 @@ public class ToggleButton extends Button {
         return false;
     }
     public ItemStack getButtonItem(Player player) {
-        return new ItemBuilder(isEnabled(player) ? Material.GREEN_CONCRETE : Material.RED_CONCRETE).name(getOptionName()).lore(getDescription()).build();
+        return new ItemBuilder(getMaterial() == null ? (isEnabled(player) ? Material.GREEN_CONCRETE : Material.RED_CONCRETE) : getMaterial()).name((isEnabled(player) ? "<green>" : "<red>") + getOptionName()).lore(getDescription()).glow(isEnabled(player)).build();
     }
 }

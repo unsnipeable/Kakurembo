@@ -33,6 +33,7 @@ public final class HideAndSeek extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new GameListener(), this);
 
+        this.getCommand("settrackerenabled").setExecutor(new SetTrackerEnabledCommand());
         this.getCommand("countdown").setExecutor(new CountdownCommand());
         this.getCommand("roleselect").setExecutor(new RoleSelectCommand());
         this.getCommand("setlobby").setExecutor(new SetLobbyCommand());

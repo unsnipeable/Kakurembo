@@ -2,6 +2,7 @@ package matanku.kakurembo.api.menu.button;
 
 import matanku.kakurembo.api.menu.Button;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class IntegerButton extends Button {
 

@@ -324,11 +324,13 @@ public class GameListener implements Listener {
                             return;
                         }
 
-                        String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER"};
-                        for (String string : disallowedBlocks) {
-                            if (block.getType().name().toUpperCase().contains(string)) {
-                                Common.sendMessage(player, "<red>あなたが固定しようとしたブロックは禁止されているブロックです！");
-                                return;
+                        if (game.getSettings().isAntiCheatEnabled()) {
+                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER"};
+                            for (String string : disallowedBlocks) {
+                                if (block.getType().name().toUpperCase().contains(string)) {
+                                    Common.sendMessage(player, "<red>あなたが固定しようとしたブロックは禁止されているブロックです！");
+                                    return;
+                                }
                             }
                         }
 
@@ -339,22 +341,22 @@ public class GameListener implements Listener {
                         Common.sendMessage(player, "<yellow>あなたは <aqua>" + block.getType().name() + "<yellow> に変身しました！");
                     } else if (itemStack.equals(Items.TELEPORT_TOOL.getItem())) {
                         Location blockLoc = player.getLocation().getBlock().getLocation().clone();
-                        System.out.println(blockLoc + ", block: " + blockLoc.getBlock().getType().name());
+                        Location blockLoc2 = player.getLocation().getBlock().getLocation().clone().add(0,-1,0);
                         Location blockLocSetBack = player.getLocation();
 
                         player.teleport(new Location(blockLoc.getWorld(), blockLoc.getX() + 0.5, blockLoc.getY(), blockLoc.getZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
 
-                        String[] disallowedBlocks = new String[]{"SIGN", "STAINED_GLASS", "CARPET"};
-                        String[] disallowedBlocks2 = new String[]{"STAINED_GLASS"};
+                        String[] disallowedBlocks = new String[]{"SIGN", "CARPET"};
+                        String[] disallowedBlocks2 = new String[]{"STAINED_GLASS_PANE"};
 
                         for (String string : disallowedBlocks) {
-                            if (block != null && blockLoc.add(0,-1,0).getBlock().getType().name().toUpperCase().contains(string)) {
+                            if (blockLoc2.getBlock().getType().name().toUpperCase().contains(string)) {
                                 flag(gamePlayer, blockLocSetBack, game, player);
                                 return;
                             }
                         }
                         for (String string : disallowedBlocks2) {
-                            if (block != null && blockLoc.getBlock().getType().name().toUpperCase().contains(string)) {
+                            if (blockLoc.getBlock().getType().name().toUpperCase().contains(string)) {
                                 flag(gamePlayer, blockLocSetBack, game, player);
                                 return;
                             }
@@ -367,14 +369,18 @@ public class GameListener implements Listener {
     }
 
     public void flag(GamePlayer gamePlayer, Location blockLocSetBack, Game game, Player player) {
+        if (!game.getSettings().isAntiCheatEnabled()) return;
         gamePlayer.getPlayer().teleport(blockLocSetBack);
         gamePlayer.setFlagged(gamePlayer.getFlagged()+1);
-        if (gamePlayer.getFlagged() >= 10) {
+        if (gamePlayer.getFlagged() >= 20) {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
             player.getInventory().setContents(GameRole.SEEKER.getTools());
-            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が10回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
+            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
+            if (game.canEnd()) {
+                game.end();
+            }
         }
     }
 

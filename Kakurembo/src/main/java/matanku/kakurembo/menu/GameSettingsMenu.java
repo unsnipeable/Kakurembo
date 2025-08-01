@@ -41,7 +41,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public String getDescription() {
-                return "<gray>プレイヤーがハイダーかシーカーを選択できるようにすべきでしょうか?";
+                return "<gray>プレイヤーが/roleselectを使用してハイダーかシーカーを選択できるようにすべきでしょうか?";
             }
 
             @Override
@@ -79,7 +79,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(2, new IntegerButton() {
             @Override
             public Material getMaterial() {
-                return Material.PLAYER_HEAD;
+                return Material.DIAMOND_SWORD;
             }
 
             @Override
@@ -125,6 +125,12 @@ public class GameSettingsMenu extends Menu {
         });
 
         buttons.put(3, new ToggleButton() {
+
+            @Override
+            public Material getMaterial() {
+                return Material.OAK_DOOR;
+            }
+
             @Override
             public String getOptionName() {
                 return "<green>サーバーの途中参加";
@@ -154,6 +160,11 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
+            public Material getMaterial() {
+                return Material.OAK_STAIRS;
+            }
+
+            @Override
             public String getDescription() {
                 return "<gray>プレイヤーがチェストなど、横の当たり判定が完全でないブロックに変身できるようにすべきでしょうか?";
             }
@@ -175,7 +186,143 @@ public class GameSettingsMenu extends Menu {
                 openMenu(player);
             }
         });
-        buttons.put(7, new Button() {
+
+        buttons.put(5, new ToggleButton() {
+            @Override
+            public String getOptionName() {
+                return "<green>アンチチート";
+            }
+
+            @Override
+            public Material getMaterial() {
+                return Material.REDSTONE_BLOCK;
+            }
+
+            @Override
+            public String getDescription() {
+                return "<gray>板ガラスをしようした壁抜け\n看板や頭ブロックによる透明化\nなどのチート機能を無効化します。";
+            }
+
+            @Override
+            public boolean isEnabled(Player player) {
+                return game.getSettings().isAntiCheatEnabled();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                game.getSettings().setAntiCheatEnabled(!isEnabled(player));
+                openMenu(player);
+            }
+        });
+
+        buttons.put(6, new IntegerButton() {
+            @Override
+            public Material getMaterial() {
+                return Material.STONE_SWORD;
+            }
+
+            @Override
+            public String getOptionName() {
+                return "シーカーにするアンチチートフラグ回数";
+            }
+
+
+            @Override
+            public String getDescription() {
+                return "壁抜けなどを行おうとする回数がこの設定の回数を超えるとシーカーになります。0回はシーカー化を無効化です。";
+            }
+
+            @Override
+            public String getCurrentValue() {
+                return game.getSettings().getMaxFlag() == -1 ? "<red>未設定" : game.getSettings().getMaxFlag() + "";
+            }
+
+            @Override
+            public void plus1(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 1));
+            }
+
+            @Override
+            public void plus10(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 10));
+            }
+
+            @Override
+            public void minus1(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 1));
+            }
+
+            @Override
+            public void minus10(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 10));
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                super.clicked(player, clickType);
+                openMenu(player);
+            }
+        });
+
+        buttons.put(7, new ToggleButton() {
+            @Override
+            public String getOptionName() {
+                return "<green>心臓の音";
+            }
+
+            @Override
+            public Material getMaterial() {
+                return Material.REDSTONE;
+            }
+
+            @Override
+            public String getDescription() {
+                return "<gray>シーカーがハイダーに近づいたときに、心臓の音を出します。";
+            }
+
+            @Override
+            public boolean isEnabled(Player player) {
+                return game.getSettings().isHeartBeatEnabled();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                game.getSettings().setHeartBeatEnabled(!isEnabled(player));
+                openMenu(player);
+            }
+        });
+
+
+        buttons.put(8, new ToggleButton() {
+            @Override
+            public String getOptionName() {
+                return "<green>トラッカー";
+            }
+
+
+            @Override
+            public Material getMaterial() {
+                return Material.COMPASS;
+            }
+
+
+            @Override
+            public String getDescription() {
+                return "<gray>残り3分になった時、シーカーにハイダーの居場所を知らせます。";
+            }
+
+            @Override
+            public boolean isEnabled(Player player) {
+                return game.getSettings().isTrackerEnabled();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                game.getSettings().setTrackerEnabled(!isEnabled(player));
+                openMenu(player);
+            }
+        });
+        buttons.put(16, new Button() {
             @Override
             public String getOptionName() {
                 return "<green>プレイヤーのロールを変更する";
@@ -194,10 +341,9 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 new RoleSelectAdminMenu().openMenu(player);
-                player.closeInventory();
             }
         });
-        buttons.put(8, new Button() {
+        buttons.put(17, new Button() {
             @Override
             public String getOptionName() {
                 return "<green>ゲームを開始する";
@@ -220,5 +366,10 @@ public class GameSettingsMenu extends Menu {
             }
         });
         return buttons;
+    }
+
+    @Override
+    public int getSize() {
+        return 18;
     }
 }

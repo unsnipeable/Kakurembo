@@ -18,10 +18,7 @@ public class Button {
     }
     public ItemStack getButtonItem(Player player) {
         String value = "";
-        if (this instanceof ToggleButton tButton) {
-            value = tButton.isEnabled(player) ? "<green>" : "<red>" + tButton.isEnabled(player);
-            return new ItemBuilder(getMaterial()).name(getOptionName()).lore(getDescription(), "<red>", value).build();
-        } else if (this instanceof IntegerButton iButton) {
+        if (this instanceof IntegerButton iButton) {
             value = "<yellow>" + iButton.getCurrentValue();
             return new ItemBuilder(getMaterial()).name(getOptionName()).lore(getDescription(), "<red>", value).build();
         }
