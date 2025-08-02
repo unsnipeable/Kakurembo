@@ -48,6 +48,9 @@ public class Game {
     // Todo: map生成を単純に行う
     //
     public void generateWorld() {
+        for (GamePlayer gp : getPlayers().values()) {
+            gp.getPlayer().getInventory().clear();
+        }
         bossBar.name("<yellow>マップを生成しています").progress(1);
 
         map.generateMap(bool -> {

@@ -327,6 +327,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_CANCEL.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 gamePlayer.setParkour(false);
+                gamePlayer.getPlayer().getInventory().clear();
                 Common.sendMessage(player, "パルクールを終了しました!");
             }
             event.setCancelled(true);
@@ -452,15 +453,22 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
                         gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
+                        gamePlayer.setParkourSpawn(player.getLocation().getBlock().getLocation());
                         if (lag > 10) {
                             Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールタイムがリセットされました!");
                         }
                     } else {
                         gamePlayer.setParkour(true);
+
+                        player.getInventory().setItem(3,Items.PARKOUR_CHECKPOINT.getItem());
+                        player.getInventory().setItem(4,Items.PARKOUR_SPAWN.getItem());
+                        player.getInventory().setItem(5,Items.PARKOUR_CANCEL.getItem());
+
                         gamePlayer.setParkourTime(0);
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
                         gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
+                        gamePlayer.setParkourSpawn(player.getLocation().getBlock().getLocation());
                         Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールチャレンジが始まりました!");
                     }
                 } else if (block2Above.getType() == Material.BLUE_WOOL) {
