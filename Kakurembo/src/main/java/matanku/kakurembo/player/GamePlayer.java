@@ -29,6 +29,8 @@ public class GamePlayer {
     private boolean parkour = false;
     private int parkourTime;
     private int parkourTime2;
+    private Location parkourSpawn = null;
+    private Location checkPoint = null;
     private CheckPointStatus parkourStatus = CheckPointStatus.NOTPLAYING;
 
     public void onTickParkour() {

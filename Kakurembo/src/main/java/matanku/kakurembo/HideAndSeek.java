@@ -1,5 +1,7 @@
 package matanku.kakurembo;
 
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.command.*;
@@ -8,11 +10,23 @@ import matanku.kakurembo.game.GameListener;
 import matanku.kakurembo.api.KakuremboAPI;
 import matanku.kakurembo.api.util.BasicConfigFile;
 import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.util.ParkourUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 public final class HideAndSeek extends JavaPlugin {
@@ -70,6 +84,8 @@ public final class HideAndSeek extends JavaPlugin {
                 }
             }
         }.runTaskTimer(this,0L,1L);
+
+        ParkourUtil.onEnable();
     }
 
     @Override

@@ -6,12 +6,20 @@ plugins {
 group = 'matanku'
 version = '1.0-SNAPSHOT'
 
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
     implementation project(':KakuremboAPI')
 
     compileOnly "org.projectlombok:lombok:1.18.32"
     annotationProcessor "org.projectlombok:lombok:1.18.32"
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.9.6'
+
 }
 
 def targetJavaVersion = 21

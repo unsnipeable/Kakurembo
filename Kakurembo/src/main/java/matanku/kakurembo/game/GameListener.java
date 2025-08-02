@@ -9,6 +9,7 @@ import matanku.kakurembo.enums.GameState;
 import matanku.kakurembo.game.task.impl.HiderPhaseTask;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
 import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.util.ParkourUtil;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.menu.Button;
@@ -87,6 +88,9 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.INSTANCE.getGame();
 
         game.getPlayers().remove(player.getUniqueId());
+        if (HideAndSeek.getGamePlayerByPlayer(player) != null) {
+            HideAndSeek.getGamePlayerByPlayer(player).setDisguises(null);
+        }
 
         event.quitMessage(Common.text("<gray>[<red>-<gray>] <yellow>" + player.getName()));
 
@@ -312,6 +316,31 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.INSTANCE.getGame();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
+        if (Items.PARKOUR_CHECKPOINT.getItem().equals(itemStack)) {
+            if (gamePlayer.isParkour()) {
+                player.teleport(gamePlayer.getCheckPoint());
+                Common.sendMessage(player, "最後のチェックポイントにテレポートしました!");
+            }
+            event.setCancelled(true);
+            return;
+        }
+        if (Items.PARKOUR_CANCEL.getItem().equals(itemStack)) {
+            if (gamePlayer.isParkour()) {
+                gamePlayer.setParkour(false);
+                Common.sendMessage(player, "パルクールを終了しました!");
+            }
+            event.setCancelled(true);
+            return;
+        }
+        if (Items.PARKOUR_SPAWN.getItem().equals(itemStack)) {
+            if (gamePlayer.isParkour()) {
+                player.teleport(gamePlayer.getParkourSpawn());
+                Common.sendMessage(player, "パルクールのスタートにテレポートしました!");
+            }
+            event.setCancelled(true);
+            return;
+        }
+
         if (!Items.TRANSFORM_TOOL.getItem().equals(itemStack) && block != null && block.getType().name().toUpperCase().contains("POTTED")) {
             event.setCancelled(true);
             return;
@@ -337,7 +366,7 @@ public class GameListener implements Listener {
                             String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER"};
                             for (String string : disallowedBlocks) {
                                 if (block.getType().name().toUpperCase().contains(string)) {
-                                    Common.sendMessage(player, "<red>あなたが固定しようとしたブロックは禁止されているブロックです！");
+                                    Common.sendMessage(player, "<red>あなたが変身しようとしたブロックは禁止されているブロックです！");
                                     return;
                                 }
                             }
@@ -396,18 +425,25 @@ public class GameListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (!(player.getWorld().getBlockAt(new Location(player.getWorld(),8,-60,5)).getType() == Material.SEA_LANTERN)) {
-            return;
-        }
-
-        if (player.getLocation().getY() <= -70) {
-            player.teleport(Config.LOBBY_LOCATION);
-        }
 
         Block block = player.getLocation().getBlock();
         Block block2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
+
+
+        if (!(player.getWorld().getBlockAt(new Location(player.getWorld(),8,-60,5)).getType() == Material.SEA_LANTERN)) {
+            return;
+        }
         if (gamePlayer != null) {
+
+            if (player.getLocation().getY() <= -70) {
+                if (gamePlayer.isParkour()) {
+                    player.teleport(gamePlayer.getCheckPoint());
+                } else {
+                    player.teleport(Config.LOBBY_LOCATION);
+                }
+            }
+
             if (block.getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
                 if (block2Above.getType() == Material.WHITE_WOOL) {
                     if (gamePlayer.isParkour()) {
@@ -415,6 +451,7 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourTime(0);
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
+                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
                         if (lag > 10) {
                             Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールタイムがリセットされました!");
                         }
@@ -423,6 +460,7 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourTime(0);
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
+                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
                         Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールチャレンジが始まりました!");
                     }
                 } else if (block2Above.getType() == Material.BLUE_WOOL) {
@@ -430,6 +468,7 @@ public class GameListener implements Listener {
                         return;
                     }
                     Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールを終了しました!\n<white>あなたのタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()));
+                    ParkourUtil.addPlayerInfo(player.getName(), gamePlayer.getParkourTime());
                     gamePlayer.setParkour(false);
                     gamePlayer.setParkourStatus(CheckPointStatus.NOTPLAYING);
 
@@ -440,7 +479,8 @@ public class GameListener implements Listener {
                 if (block2Above.getType().name().equalsIgnoreCase(gamePlayer.getParkourStatus().next() + "_WOOL")) {
                     if (gamePlayer.isParkour()) {
                         gamePlayer.setParkourStatus(gamePlayer.getParkourStatus().next());
-                        Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>チェックポイントに到達しました!\n<white>現在のタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()) + "秒\n<white>前のチェックポイントからのタイム:<blue> "+Util.getSecFromTick(gamePlayer.getParkourTime2()));
+                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
+                        Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>チェックポイントに到達しました!\n<white>現在のタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()) + "\n<white>前のチェックポイントからのタイム:<blue> "+Util.getSecFromTick(gamePlayer.getParkourTime2()));
 
                         gamePlayer.parkourLap();
                     } else {

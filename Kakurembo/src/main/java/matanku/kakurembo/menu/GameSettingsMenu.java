@@ -322,6 +322,76 @@ public class GameSettingsMenu extends Menu {
                 openMenu(player);
             }
         });
+
+        buttons.put(9, new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                return new ItemBuilder(Material.IRON_SWORD).name("<green>剣の種類").lore("","<gray>種類: " + (game.getSettings().getSwordType() == null ? "<red>未設定" : "<green>" + game.getSettings().getSwordType() + "<yellow> (CLICK)"),"","<gray>火属性: " + (game.getSettings().isSwordFire() ? "<green>有効" : "<red>無効") + "<yellow> (LSHIFT + CLICK)").build();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                switch (clickType) {
+                    case LEFT:
+                        game.getSettings().setSwordType(game.getSettings().getSwordType().next());
+                        break;
+                    case SHIFT_LEFT:
+                        game.getSettings().setSwordFire(!game.getSettings().isSwordFire());
+                        break;
+                }
+                openMenu(player);
+            }
+        });
+
+
+        buttons.put(10, new IntegerButton() {
+            @Override
+            public Material getMaterial() {
+                return Material.TRIPWIRE_HOOK;
+            }
+
+            @Override
+            public String getOptionName() {
+                return "スタンクールダウン";
+            }
+
+
+            @Override
+            public String[] getDescription() {
+                return new String[]{"スタンのクールダウン"};
+            }
+
+            @Override
+            public String getCurrentValue() {
+                return game.getSettings().getMaxFlag() == -1 ? "<red>未設定" : game.getSettings().getMaxFlag() + "";
+            }
+
+            @Override
+            public void plus1(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 1));
+            }
+
+            @Override
+            public void plus10(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 10));
+            }
+
+            @Override
+            public void minus1(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 1));
+            }
+
+            @Override
+            public void minus10(Player player) {
+                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 10));
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                super.clicked(player, clickType);
+                openMenu(player);
+            }
+        });
         buttons.put(25, new Button() {
             @Override
             public String getOptionName() {

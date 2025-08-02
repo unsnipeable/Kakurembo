@@ -17,7 +17,7 @@ public enum GameRole {
             Items.STUN.getItem()
     }),
     SEEKER("シーカー", "<red>", "制限時間内にハイダー全員を見つける", new ItemStack[]{
-            Items.NETHERITE_SWORD.getItem()
+            Items.SWORD.getItem()
     });
 
     private final String name;
