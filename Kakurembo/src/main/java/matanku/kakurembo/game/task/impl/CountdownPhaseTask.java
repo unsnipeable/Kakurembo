@@ -1,5 +1,6 @@
 package matanku.kakurembo.game.task.impl;
 
+import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.util.Common;
@@ -11,9 +12,12 @@ public class CountdownPhaseTask extends GameTask {
         super(seconds);
     }
 
+
     @Override
     public void onRun() {
         if (tick == 0) {
+            if (HideAndSeek.getINSTANCE().isLoad()) return;
+            HideAndSeek.getINSTANCE().setLoad(true);
             cancel();
             game.generateWorld();
             return;

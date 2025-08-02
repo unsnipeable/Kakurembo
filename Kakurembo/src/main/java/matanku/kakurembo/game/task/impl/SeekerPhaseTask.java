@@ -86,11 +86,9 @@ public class SeekerPhaseTask extends GameTask {
                     for (GamePlayer hider : game.getPlayers().values()) {
                         if (hider.getRole() == GameRole.HIDER) {
                             double distance = entry.getValue().getPlayer().getLocation().distance(hider.getPlayer().getLocation());
-                            HideAndSeek.getINSTANCE().getLogger().info("WOOO " +distance);
                             if (distance <= 8) {
-                                if (!(distance <= 4)) {
-                                    entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.8f, 0.6f);
-                                    HideAndSeek.getINSTANCE().getLogger().info("8block inai");
+                                if (!(distance <= 3)) {
+                                    entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 0.8f);
                                 } else {
                                     new BukkitRunnable() {
                                         int count = 0;
@@ -102,7 +100,7 @@ public class SeekerPhaseTask extends GameTask {
                                                 return;
                                             }
                                             HideAndSeek.getINSTANCE().getLogger().info("4block inai");
-                                            entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.8f, 1.4f);
+                                            entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 1.4f);
                                             count++;
                                         }
                                     }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);

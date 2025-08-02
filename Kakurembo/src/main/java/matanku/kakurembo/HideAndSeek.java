@@ -1,6 +1,7 @@
 package matanku.kakurembo;
 
 import lombok.Getter;
+import lombok.Setter;
 import matanku.kakurembo.command.*;
 import matanku.kakurembo.game.Game;
 import matanku.kakurembo.game.GameListener;
@@ -17,6 +18,8 @@ public final class HideAndSeek extends JavaPlugin {
     private BasicConfigFile configFile;
     private BasicConfigFile mapFile;
 
+    @Setter
+    private boolean load;
     private Game game;
 
 

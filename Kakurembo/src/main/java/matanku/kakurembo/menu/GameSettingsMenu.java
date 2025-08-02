@@ -40,8 +40,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>プレイヤーが/roleselectを使用してハイダーかシーカーを選択できるようにすべきでしょうか?";
+            public String[] getDescription() {
+                return new String[]{"<gray>プレイヤーが/roleselectを使用して","ハイダーかシーカーを選択できるようにすべきでしょうか?"};
             }
 
             @Override
@@ -88,8 +88,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "鬼側の最大数を設定する";
+            public String[] getDescription() {
+                return new String[]{"鬼側の最大数を設定する"};
             }
 
             @Override
@@ -137,8 +137,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>プレイヤーがサーバーに途中参加した際、接続を拒否するのではなく、シーカーとして参加させるべきでしょうか？";
+            public String[] getDescription() {
+                return new String[]{"<gray>プレイヤーがサーバーに途中参加した際接続を拒否するのではなく","シーカーとして参加させるべきでしょうか？"};
             }
 
             @Override
@@ -165,8 +165,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>プレイヤーがチェストなど、横の当たり判定が完全でないブロックに変身できるようにすべきでしょうか?";
+            public String[] getDescription() {
+                return new String[]{"<gray>プレイヤーがチェストなど","横の当たり判定が完全でないブロックに変身できるようにすべきでしょうか?"};
             }
 
             @Override
@@ -199,8 +199,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>板ガラスをしようした壁抜け\n看板や頭ブロックによる透明化\nなどのチート機能を無効化します。";
+            public String[] getDescription() {
+                return new String[]{"<gray>板ガラスをしようした壁抜け","看板や頭ブロックによる透明化","などのチート機能を無効化します。"};
             }
 
             @Override
@@ -228,8 +228,8 @@ public class GameSettingsMenu extends Menu {
 
 
             @Override
-            public String getDescription() {
-                return "壁抜けなどを行おうとする回数がこの設定の回数を超えるとシーカーになります。0回はシーカー化を無効化です。";
+            public String[] getDescription() {
+                return new String[]{"壁抜けなどを行おうとする回数がこの設定の回数を超えるとシーカーになります。","0回にするとシーカー化を無効化します。"};
             }
 
             @Override
@@ -276,8 +276,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>シーカーがハイダーに近づいたときに、心臓の音を出します。";
+            public String[] getDescription() {
+                return new String[]{"<gray>シーカーがハイダーに近づいたときに、心臓の音を出します。"};
             }
 
             @Override
@@ -307,8 +307,8 @@ public class GameSettingsMenu extends Menu {
 
 
             @Override
-            public String getDescription() {
-                return "<gray>残り3分になった時、シーカーにハイダーの居場所を知らせます。";
+            public String[] getDescription() {
+                return new String[]{"<gray>残り3分になった時、シーカーにハイダーの居場所を知らせます。"};
             }
 
             @Override
@@ -334,8 +334,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>クリックして全てのプレイヤーのロールを編集します。";
+            public String[] getDescription() {
+                return new String[]{"<gray>クリックして全てのプレイヤーのロールを編集します。"};
             }
 
             @Override
@@ -355,8 +355,8 @@ public class GameSettingsMenu extends Menu {
             }
 
             @Override
-            public String getDescription() {
-                return "<gray>さあ、クリックしてゲームを始めましょう!";
+            public String[] getDescription() {
+                return new String[]{"<gray>さあ、クリックしてゲームを始めましょう!"};
             }
 
             @Override
