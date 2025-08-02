@@ -22,7 +22,7 @@ public class Button {
     public ItemStack getButtonItem(Player player) {
         String value = "";
         if (this instanceof IntegerButton iButton) {
-            value = "<yellow>" + iButton.getCurrentValue();
+            value = "<gray>現在の値: <yellow>" + iButton.getCurrentValue();
             ArrayList<String> a = new ArrayList<>(Arrays.asList(getDescription()));
             a.add("<red>");
             a.add(value);

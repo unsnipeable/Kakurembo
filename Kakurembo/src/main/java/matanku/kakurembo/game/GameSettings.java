@@ -10,7 +10,7 @@ public class GameSettings {
 
     private boolean allowPublicRoleSelect = false;
     private String map = null;
-    private SwordType swordType = null;
+    private SwordType swordType = SwordType.NETHERITE;
     private int maxSeekers = -1;
     private int maxFlag = 20;
     private int stanCooldown = 60;

@@ -358,7 +358,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public String[] getDescription() {
-                return new String[]{"スタンのクールダウン"};
+                return new String[]{"スタンが使えるクールダウン"};
             }
 
             @Override
