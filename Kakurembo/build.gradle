@@ -8,7 +8,7 @@ version = '1.0-SNAPSHOT'
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
-    implementation project(':Diamond-API')
+    implementation project(':KakuremboAPI')
 
     compileOnly "org.projectlombok:lombok:1.18.32"
     annotationProcessor "org.projectlombok:lombok:1.18.32"

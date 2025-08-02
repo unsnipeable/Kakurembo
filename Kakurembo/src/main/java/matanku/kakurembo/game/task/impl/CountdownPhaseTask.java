@@ -26,7 +26,7 @@ public class CountdownPhaseTask extends GameTask {
             Common.broadcastSound(Sound.UI_BUTTON_CLICK);
         }
 
-        game.getBossBar().name("<yellow>この試合は<aqua>" + Util.getTime(tick) + "<yellow>後に開始します").color(BossBar.Color.YELLOW).progress((float) tick / seconds);
+        game.getBossBar().name("<yellow>この試合は<aqua>" + Util.getTime(tick) + "<yellow>後に開始します").color(BossBar.Color.YELLOW).progress(Math.max((float) tick / seconds,0f));
         game.getBossBar().show();
     }
 

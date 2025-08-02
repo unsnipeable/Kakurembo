@@ -3,7 +3,7 @@ setlocal
 set "JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.2.13-hotspot"
 set "PATH=%JAVA_HOME%\bin;%PATH%"
 set "ROOT_DIR=%~dp0"
-set "DIAMOND_JAR=%ROOT_DIR%Diamond-API\build\libs"
+set "DIAMOND_JAR=%ROOT_DIR%KakuremboAPI\build\libs"
 set "KAKUREMBO_JAR=%ROOT_DIR%Kakurembo\build\libs"
 set "KAKUREMBO_FAKEJAR=%ROOT_DIR%build\libs"
 set "OUTPUT_DIR=%ROOT_DIR%build\libs"
