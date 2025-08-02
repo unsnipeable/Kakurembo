@@ -27,12 +27,9 @@ public class EndTask extends GameTask {
         }
     }
 
-    private boolean isBroadcasted = false;
-
     @Override
     public void preRun() {
 
-        if (isBroadcasted) return;
         Common.broadcastMessage(
                 "",
                 "<yellow>ゲームオーバー!",
@@ -45,7 +42,9 @@ public class EndTask extends GameTask {
         game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
         game.getBossBar().show();
 
-        game.getGamePlayersBossBar().destroy();
+
+        game.setLoaded(false);
+
         for (GamePlayer gamePlayer : game.getPlayers().values()) {
             gamePlayer.setDisguises(null);
             gamePlayer.setFlagged(0);
@@ -60,7 +59,6 @@ public class EndTask extends GameTask {
             }
         }
 
-        isBroadcasted = true;
     }
 
     @Override

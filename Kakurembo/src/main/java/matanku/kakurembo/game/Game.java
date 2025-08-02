@@ -27,6 +27,7 @@ public class Game {
     public static final String DISGUISE_KEY = "disguise";
 
     private final Map<UUID, GamePlayer> players = new HashMap<>();
+    private boolean loaded = false;
     private GameMap map = new GameMap();
     private GameSettings settings = new GameSettings();
     private GameState state = GameState.WAITING;
@@ -35,10 +36,12 @@ public class Game {
     private TaskTicker currentTask;
 
     public void startCountdown(int seconds) {
+        if (loaded) return;
         state = GameState.STARTING;
         bossBar = new GlobalBossBar(BossBar.bossBar(Common.text("<yellow>準備時間"), 1, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS), "game");
         gamePlayersBossBar = new GlobalBossBar(BossBar.bossBar(Common.text("<aqua>またんくかくれんぼ"),0,BossBar.Color.BLUE, BossBar.Overlay.PROGRESS), "nokori");
         currentTask = new CountdownPhaseTask(seconds);
+        loaded = true;
     }
 
     //
@@ -147,6 +150,10 @@ public class Game {
         map = new GameMap();
 
         state = GameState.WAITING;
+        if (gamePlayersBossBar != null) {
+            gamePlayersBossBar.destroy();
+            gamePlayersBossBar = null;
+        }
         if (bossBar != null) {
             bossBar.destroy();
             bossBar = null;
