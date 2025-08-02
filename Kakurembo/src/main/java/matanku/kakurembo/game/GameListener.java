@@ -6,6 +6,8 @@ import matanku.kakurembo.enums.CheckPointStatus;
 import matanku.kakurembo.enums.DisguiseTypes;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.enums.GameState;
+import matanku.kakurembo.game.task.impl.HiderPhaseTask;
+import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.util.Util;
@@ -68,8 +70,12 @@ public class GameListener implements Listener {
         } else {
             game.getPlayers().get(player.getUniqueId()).setRole(GameRole.SEEKER);
             Common.sendMessage(player, "<aqua>あなたは途中参加したため、" + GameRole.SEEKER.getColoredName() + "として参加しました!");
-            game.getMap().teleport(player);
-            player.getInventory().addItem(new ItemStack(Material.NETHERITE_SWORD));
+            if (game.getCurrentTask() instanceof SeekerPhaseTask) {
+                game.getMap().teleport(player);
+                player.getInventory().addItem(new ItemStack(Material.NETHERITE_SWORD));
+            } else {
+                player.teleport(Config.LOBBY_LOCATION);
+            }
             Common.broadcastMessage("<yellow>" + player.getName() + "<aqua>は途中参加してきたので、" + GameRole.SEEKER.getColoredName() + "としてゲームに参加しました！");
         }
         event.joinMessage();
@@ -91,11 +97,6 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player p) {
-            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                p.teleport(Config.LOBBY_LOCATION);
-            }
-        }
 
 
         Game game = HideAndSeek.INSTANCE.getGame();
@@ -398,6 +399,11 @@ public class GameListener implements Listener {
         if (!(player.getWorld().getBlockAt(new Location(player.getWorld(),8,-60,5)).getType() == Material.SEA_LANTERN)) {
             return;
         }
+
+        if (player.getLocation().getY() <= -70) {
+            player.teleport(Config.LOBBY_LOCATION);
+        }
+
         Block block = player.getLocation().getBlock();
         Block block2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
