@@ -377,7 +377,7 @@ public class GameListener implements Listener {
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
             player.getInventory().setContents(GameRole.SEEKER.getTools());
-            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
+            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + gamePlayer.getFlagged() + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
             if (game.canEnd()) {
                 game.end();
             }

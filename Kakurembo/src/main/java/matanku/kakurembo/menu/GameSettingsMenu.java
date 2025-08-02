@@ -200,7 +200,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public String[] getDescription() {
-                return new String[]{"<gray>板ガラスをしようした壁抜け","看板や頭ブロックによる透明化","などのチート機能を無効化します。"};
+                return new String[]{"<gray>板ガラスをしようした壁抜け","看板や頭ブロックによる透明化","などのチートを無効化。"};
             }
 
             @Override
@@ -322,7 +322,7 @@ public class GameSettingsMenu extends Menu {
                 openMenu(player);
             }
         });
-        buttons.put(16, new Button() {
+        buttons.put(25, new Button() {
             @Override
             public String getOptionName() {
                 return "プレイヤーのロールを変更する";
@@ -343,7 +343,7 @@ public class GameSettingsMenu extends Menu {
                 new RoleSelectAdminMenu().openMenu(player);
             }
         });
-        buttons.put(17, new Button() {
+        buttons.put(26, new Button() {
             @Override
             public String getOptionName() {
                 return "ゲームを開始する";
@@ -370,6 +370,6 @@ public class GameSettingsMenu extends Menu {
 
     @Override
     public int getSize() {
-        return 18;
+        return 27;
     }
 }

@@ -42,7 +42,7 @@ public class Game {
     }
 
     //
-    // @Todo: map生成を単純に行う
+    // Todo: map生成を単純に行う
     //
     public void generateWorld() {
         bossBar.name("<yellow>マップを生成しています").progress(1);
