@@ -2,6 +2,7 @@ package matanku.kakurembo.game;
 
 import matanku.kakurembo.Config;
 import matanku.kakurembo.Items;
+import matanku.kakurembo.enums.CheckPointStatus;
 import matanku.kakurembo.enums.DisguiseTypes;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.enums.GameState;
@@ -90,6 +91,13 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player p) {
+            if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                p.teleport(Config.LOBBY_LOCATION);
+            }
+        }
+
+
         Game game = HideAndSeek.INSTANCE.getGame();
         if (event instanceof EntityDamageByEntityEvent) {
             if (event.getEntity() instanceof Player entity && ((EntityDamageByEntityEvent) event).getDamager() instanceof Player damager) {
@@ -385,6 +393,59 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (!(player.getWorld().getBlockAt(new Location(player.getWorld(),8,-60,5)).getType() == Material.SEA_LANTERN)) {
+            return;
+        }
+        Block block = player.getLocation().getBlock();
+        Block block2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
+        GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
+        if (gamePlayer != null) {
+            if (block.getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
+                if (block2Above.getType() == Material.WHITE_WOOL) {
+                    if (gamePlayer.isParkour()) {
+                        int lag = gamePlayer.getParkourTime();
+                        gamePlayer.setParkourTime(0);
+                        gamePlayer.setParkourTime2(0);
+                        gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
+                        if (lag > 10) {
+                            Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールタイムがリセットされました!");
+                        }
+                    } else {
+                        gamePlayer.setParkour(true);
+                        gamePlayer.setParkourTime(0);
+                        gamePlayer.setParkourTime2(0);
+                        gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
+                        Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールチャレンジが始まりました!");
+                    }
+                } else if (block2Above.getType() == Material.BLUE_WOOL) {
+                    if (gamePlayer.getParkourStatus() != CheckPointStatus.LIGHT_BLUE) {
+                        return;
+                    }
+                    Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールを終了しました!\n<white>あなたのタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()));
+                    gamePlayer.setParkour(false);
+                    gamePlayer.setParkourStatus(CheckPointStatus.NOTPLAYING);
+
+                    gamePlayer.setParkourTime(0);
+                    gamePlayer.setParkourTime2(0);
+                }
+            } else if (block.getType() == Material.HEAVY_WEIGHTED_PRESSURE_PLATE) {
+                if (block2Above.getType().name().equalsIgnoreCase(gamePlayer.getParkourStatus().next() + "_WOOL")) {
+                    if (gamePlayer.isParkour()) {
+                        gamePlayer.setParkourStatus(gamePlayer.getParkourStatus().next());
+                        Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>チェックポイントに到達しました!\n<white>現在のタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()) + "秒\n<white>前のチェックポイントからのタイム:<blue> "+Util.getSecFromTick(gamePlayer.getParkourTime2()));
+
+                        gamePlayer.parkourLap();
+                    } else {
+                        Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>あなたはパルクールをしていません!");
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onClick(InventoryClickEvent event) {
 
         ItemStack is = event.getCurrentItem();
@@ -407,7 +468,12 @@ public class GameListener implements Listener {
             });
         }
 
-        event.setCancelled(true);
+        for (GamePlayer ga : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+            if (ga.getPlayer().getName().contains(player.getName())) {
+                if (!ga.isEnableBuild())
+                    event.setCancelled(true);
+            }
+        }
     }
 
     public void clicked(Button b, Player player, ClickType clickType) {

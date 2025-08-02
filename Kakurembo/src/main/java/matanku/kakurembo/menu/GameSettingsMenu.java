@@ -361,6 +361,13 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
+
+                if (HideAndSeek.INSTANCE.getGame().getSettings().getMap() == null) {
+                    Common.sendMessage(player, "<red>カウントダウンを開始しようとしたときにエラーが発生しました: マップがまだ選択されていません!");
+                    new MapSelectMenu(new GameSettingsMenu()).openMenu(player);
+                    return;
+                }
+
                 HideAndSeek.INSTANCE.getGame().startCountdown(10);
                 player.closeInventory();
             }

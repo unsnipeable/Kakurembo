@@ -3,7 +3,7 @@ package matanku.kakurembo.player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import matanku.kakurembo.HideAndSeek;
+import matanku.kakurembo.enums.CheckPointStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,12 +22,32 @@ public class GamePlayer {
     private GameRole role = GameRole.NONE;
     private int stanCooldown = 0;
     private int flagged = 0;
+    private boolean enableBuild;
     @Setter
     private DisguiseData disguises;
+
+    private boolean parkour = false;
+    private int parkourTime;
+    private int parkourTime2;
+    private CheckPointStatus parkourStatus = CheckPointStatus.NOTPLAYING;
+
+    public void onTickParkour() {
+        if (parkour) {
+            parkourTime++;
+            parkourTime2++;
+        } else {
+            setParkourTime(0);
+            setParkourTime2(0);
+        }
+    }
 
     public void reset() {
         role = GameRole.NONE;
         disguises = null;
+    }
+
+    public void parkourLap() {
+        setParkourTime2(0);
     }
 
 

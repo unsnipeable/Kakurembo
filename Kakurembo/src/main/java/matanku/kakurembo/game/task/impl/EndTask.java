@@ -48,6 +48,7 @@ public class EndTask extends GameTask {
         game.getGamePlayersBossBar().destroy();
         for (GamePlayer gamePlayer : game.getPlayers().values()) {
             gamePlayer.setDisguises(null);
+            gamePlayer.setFlagged(0);
         }
 
 

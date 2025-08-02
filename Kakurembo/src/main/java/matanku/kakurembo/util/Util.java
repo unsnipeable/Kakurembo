@@ -23,6 +23,10 @@ public class Util {
 
     public static final List<Integer> ANNOUNCE = Arrays.asList(600, 500, 400, 300, 240, 180, 120, 60, 30, 20, 10, 5, 4, 3, 2, 1);
 
+    public static String getSecFromTick(int ticks) {
+        return String.format("%.1f秒", (double)ticks/20);
+    }
+
     public static <T> T random(T... objects) {
         int i = new Random().nextInt(objects.length);
         return objects[i];
