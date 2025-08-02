@@ -319,7 +319,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_CHECKPOINT.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 player.teleport(gamePlayer.getCheckPoint());
-                Common.sendMessage(player, "最後のチェックポイントにテレポートしました!");
+                Common.sendMessage(player, "<green>最後のチェックポイントにテレポートしました!");
             }
             event.setCancelled(true);
             return;
@@ -327,8 +327,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_CANCEL.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 gamePlayer.setParkour(false);
-                gamePlayer.getPlayer().getInventory().clear();
-                Common.sendMessage(player, "パルクールを終了しました!");
+                Common.sendMessage(player, "<green>パルクールを終了しました!");
             }
             event.setCancelled(true);
             return;
@@ -336,7 +335,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_SPAWN.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 player.teleport(gamePlayer.getParkourSpawn());
-                Common.sendMessage(player, "パルクールのスタートにテレポートしました!");
+                Common.sendMessage(player, "<green>パルクールのスタートにテレポートしました!");
             }
             event.setCancelled(true);
             return;
@@ -452,8 +451,8 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourTime(0);
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
-                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
-                        gamePlayer.setParkourSpawn(player.getLocation().getBlock().getLocation());
+                        gamePlayer.setCheckPoint(player.getLocation());
+                        gamePlayer.setParkourSpawn(player.getLocation());
                         if (lag > 10) {
                             Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールタイムがリセットされました!");
                         }
@@ -467,8 +466,8 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourTime(0);
                         gamePlayer.setParkourTime2(0);
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
-                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
-                        gamePlayer.setParkourSpawn(player.getLocation().getBlock().getLocation());
+                        gamePlayer.setCheckPoint(player.getLocation());
+                        gamePlayer.setParkourSpawn(player.getLocation());
                         Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールチャレンジが始まりました!");
                     }
                 } else if (block2Above.getType() == Material.BLUE_WOOL) {
@@ -487,7 +486,7 @@ public class GameListener implements Listener {
                 if (block2Above.getType().name().equalsIgnoreCase(gamePlayer.getParkourStatus().next() + "_WOOL")) {
                     if (gamePlayer.isParkour()) {
                         gamePlayer.setParkourStatus(gamePlayer.getParkourStatus().next());
-                        gamePlayer.setCheckPoint(player.getLocation().getBlock().getLocation());
+                        gamePlayer.setCheckPoint(player.getLocation());
                         Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>チェックポイントに到達しました!\n<white>現在のタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()) + "\n<white>前のチェックポイントからのタイム:<blue> "+Util.getSecFromTick(gamePlayer.getParkourTime2()));
 
                         gamePlayer.parkourLap();

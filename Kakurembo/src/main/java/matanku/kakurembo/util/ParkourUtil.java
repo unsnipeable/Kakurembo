@@ -26,7 +26,7 @@ public class ParkourUtil {
     public static void onEnable() {
         ParkourUtil.loadDataFile();
         if (Bukkit.getWorld("world") == null) return;
-        Location loc = Bukkit.getWorld("world").getBlockAt(15,-60 ,11).getLocation();
+        Location loc = Bukkit.getWorld("world").getBlockAt(15,-56 ,11).getLocation();
         ParkourUtil.createEmptyHologram(loc);
 
         new BukkitRunnable() {

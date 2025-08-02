@@ -49,7 +49,7 @@ public class Game {
     //
     public void generateWorld() {
         for (GamePlayer gp : getPlayers().values()) {
-            gp.getPlayer().getInventory().clear();
+            gp.setParkour(false);
         }
         bossBar.name("<yellow>マップを生成しています").progress(1);
 

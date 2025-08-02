@@ -43,6 +43,13 @@ public class GamePlayer {
         }
     }
 
+    public void setParkour(boolean bool) {
+        if (!bool) {
+            getPlayer().getInventory().clear();
+        }
+        parkour = bool;
+    }
+
     public void reset() {
         role = GameRole.NONE;
         disguises = null;
