@@ -95,6 +95,9 @@ public class PartyCommand implements CommandExecutor {
             case 2:
                 switch (args[0].toLowerCase()) {
                     case "invite":
+                        if (gamePlayer.getPlayer().getName().equalsIgnoreCase(args[1])) {
+                            log(gamePlayer, "あなた自身をPartyに招待することはできません!");
+                        }
                         if (gamePlayer.getParty() == null) {
                             gamePlayer.setParty(new Party());
                             gamePlayer.getParty().member.add(gamePlayer);
@@ -107,7 +110,7 @@ public class PartyCommand implements CommandExecutor {
                                     for (GamePlayer pm : gamePlayer.getParty().getMember()) {
                                         log(pm, player.getName() + "が" + gp.getPlayer().getName() + "を招待しました!", "<red>60<yellow>秒以内なら入ることができます!");
                                     }
-                                    log(gp, player.getName() +"があなたを彼らのPartyに招待しました! <red>60<yellow>秒以内なら入ることができます!");
+                                    log(gp, player.getName() +"があなたを彼らのPartyに招待しました! <gold>/party accept " + player.getName() + "<yellow>で参加できます! <red>60<yellow>秒以内なら入ることができます!");
                                     Party currentParty = gamePlayer.getParty();
                                     currentParty.getInvites().add(gp);
 
