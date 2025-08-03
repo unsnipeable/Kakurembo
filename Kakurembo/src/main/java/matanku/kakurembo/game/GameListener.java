@@ -1,11 +1,9 @@
 package matanku.kakurembo.game;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import matanku.kakurembo.Config;
 import matanku.kakurembo.Items;
-import matanku.kakurembo.enums.CheckPointStatus;
-import matanku.kakurembo.enums.DisguiseTypes;
-import matanku.kakurembo.enums.GameRole;
-import matanku.kakurembo.enums.GameState;
+import matanku.kakurembo.enums.*;
 import matanku.kakurembo.game.task.impl.HiderPhaseTask;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
 import matanku.kakurembo.player.GamePlayer;
@@ -19,6 +17,7 @@ import matanku.kakurembo.api.menu.button.IntegerButton;
 import matanku.kakurembo.api.menu.button.ToggleButton;
 import matanku.kakurembo.api.menu.pagination.PaginatedMenu;
 import matanku.kakurembo.api.util.Common;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -67,19 +66,18 @@ public class GameListener implements Listener {
         PlayerUtil.reset(player);
         if (!game.isStarted()) {
             player.teleport(Config.LOBBY_LOCATION);
-            event.joinMessage(Common.text("<gray>[<green>+<gray>] <yellow>" + player.getName()));
         } else {
             game.getPlayers().get(player.getUniqueId()).setRole(GameRole.SEEKER);
             Common.sendMessage(player, "<aqua>あなたは途中参加したため、" + GameRole.SEEKER.getColoredName() + "として参加しました!");
             if (game.getCurrentTask() instanceof SeekerPhaseTask) {
                 game.getMap().teleport(player);
-                player.getInventory().addItem(new ItemStack(Material.NETHERITE_SWORD));
+                player.getInventory().addItem(Items.SWORD.getItem());
             } else {
                 player.teleport(Config.LOBBY_LOCATION);
             }
             Common.broadcastMessage("<yellow>" + player.getName() + "<aqua>は途中参加してきたので、" + GameRole.SEEKER.getColoredName() + "としてゲームに参加しました！");
         }
-        event.joinMessage();
+        event.joinMessage(Common.text("<gray>[<green>+<gray>] <yellow>" + player.getName()));
     }
 
     @EventHandler
@@ -559,5 +557,27 @@ public class GameListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onChat(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        Component message = event.message();
+        GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
+        if (gamePlayer != null) {
+            if (gamePlayer.getFocusedChat() == ChatEnum.ALL) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    Common.sendMessage(p,"<gray>" + player.getName() + ": " + message);
+                }
+            } else if (gamePlayer.getFocusedChat() == ChatEnum.PARTY) {
+                if (gamePlayer.getParty() == null) {
+                    Common.sendMessage(gamePlayer.getPlayer(),"Partyに入っていないため、全体チャットに移動しました。");
+                    gamePlayer.setFocusedChat(ChatEnum.ALL);
+                    return;
+                }
+                for (GamePlayer gp : gamePlayer.getParty().getMember()) {
+                    Common.sendMessage(gp.getPlayer(),"<blue>Party <dark_gray>> <gray>" + player.getName() +"<white>: " + message);
+                }
+            }
+        }
+    }
 
 }

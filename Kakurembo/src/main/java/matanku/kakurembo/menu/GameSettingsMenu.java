@@ -326,7 +326,7 @@ public class GameSettingsMenu extends Menu {
         buttons.put(9, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.IRON_SWORD).name("<green>剣の種類").lore("","<gray>種類: " + (game.getSettings().getSwordType() == null ? "<red>未設定" : "<green>" + game.getSettings().getSwordType() + "<yellow> (CLICK)"),"","<gray>火属性: " + (game.getSettings().isSwordFire() ? "<green>有効" : "<red>無効") + "<yellow> (LSHIFT + CLICK)").build();
+                return new ItemBuilder(Material.IRON_SWORD).name("<green>剣の種類").lore("","<gray>種類: " + (game.getSettings().getSwordType() == null ? "<red>未設定" : "<green>" + game.getSettings().getSwordType().getName() + "<yellow> (CLICK)"),"","<gray>火属性: " + (game.getSettings().isSwordFire() ? "<green>有効" : "<red>無効") + "<yellow> (LSHIFT + CLICK)").enchantment(Enchantment.FIRE_ASPECT, 1).build();
             }
 
             @Override

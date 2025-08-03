@@ -15,6 +15,10 @@ commands:
     permission-message: §cYou don't have permissions to run that command!
   disguiseselect:
   roleselect:
+  party:
+    aliases: [p]
+  chat:
+    aliases: [ch]
   setlobby:
     permission-message: §cYou don't have permissions to run that command!
     permission: op

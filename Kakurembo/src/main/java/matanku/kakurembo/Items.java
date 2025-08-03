@@ -24,7 +24,11 @@ public enum Items {
 
     public ItemStack getItem() {
         if (this == Items.SWORD) {
-            return new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().build().clone();
+            ItemBuilder ib = new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable();
+            if (HideAndSeek.getINSTANCE().getGame().getSettings().isSwordFire()) {
+                ib = ib.enchantment(Enchantment.FIRE_ASPECT, 1);
+            }
+            return ib.build().clone();
         }
         return item.clone();
     }
