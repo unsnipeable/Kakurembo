@@ -27,8 +27,8 @@ public class PartyCommand implements CommandExecutor {
         Player player = (Player)commandSender;
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
 
-        if (gamePlayer == null || args == null || args[0].equalsIgnoreCase("help")) {
-            Common.sendMessage(player, helpMessage);
+        if (gamePlayer == null || args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            log(player, helpMessage);
             return false;
         }
 
@@ -56,6 +56,9 @@ public class PartyCommand implements CommandExecutor {
                             log(player, "あなたはPartyに入っていません!");
                         } else {
                             if (gamePlayer.isPartyLeader()) {
+                                if (gamePlayer.getParty().getMember() == null) {
+                                    log(gamePlayer, "リーダーにより、このPartyは解散されました。");
+                                }
                                 for (GamePlayer gp : gamePlayer.getParty().getMember()) {
                                     log(gp, "リーダーにより、このPartyは解散されました。");
                                     gp.setParty(null);
@@ -72,6 +75,9 @@ public class PartyCommand implements CommandExecutor {
                             if (gamePlayer.isPartyLeader()) {
                                 GamePlayer NewLeader = Util.random(gamePlayer.getParty().getMember());
                                 gamePlayer.getParty().setLeader(NewLeader);
+                                if (gamePlayer.getParty().getMember() == null) {
+                                    log(gamePlayer, "リーダーがこのPartyから退出したため、" + NewLeader.getPlayer().getName() + "がリーダーになりました。");
+                                }
                                 for (GamePlayer gp : gamePlayer.getParty().getMember()) {
                                     log(gp, "リーダーがこのPartyから退出したため、" + NewLeader.getPlayer().getName() + "がリーダーになりました。");
                                 }
@@ -79,6 +85,9 @@ public class PartyCommand implements CommandExecutor {
                                 gamePlayer.setParty(null);
                             } else {
                                 log(player, "Partyから退出しました。");
+                                if (gamePlayer.getParty().getMember() == null) {
+                                    log(gamePlayer, player.getName() + "がPartyから退出しました。");
+                                }
                                 for (GamePlayer gp : gamePlayer.getParty().getMember()) {
                                     log(gp, player.getName() + "がPartyから退出しました。");
                                 }
@@ -92,11 +101,13 @@ public class PartyCommand implements CommandExecutor {
                         }
                         break;
                 }
+                break;
             case 2:
                 switch (args[0].toLowerCase()) {
                     case "invite":
                         if (gamePlayer.getPlayer().getName().equalsIgnoreCase(args[1])) {
                             log(gamePlayer, "あなた自身をPartyに招待することはできません!");
+                            return false;
                         }
                         if (gamePlayer.getParty() == null) {
                             gamePlayer.setParty(new Party());
@@ -107,6 +118,9 @@ public class PartyCommand implements CommandExecutor {
                                 if (gp.getParty() == gamePlayer.getParty()) {
                                     log(gamePlayer, "そのプレイヤーはこのPartyに参加しています!");
                                 } else {
+                                    if (gamePlayer.getParty().getMember() == null) {
+                                        log(gamePlayer, player.getName() + "が" + gp.getPlayer().getName() + "を招待しました!", "<red>60<yellow>秒以内なら入ることができます!");
+                                    }
                                     for (GamePlayer pm : gamePlayer.getParty().getMember()) {
                                         log(pm, player.getName() + "が" + gp.getPlayer().getName() + "を招待しました!", "<red>60<yellow>秒以内なら入ることができます!");
                                     }
@@ -118,6 +132,9 @@ public class PartyCommand implements CommandExecutor {
                                         if (gamePlayer.getParty() == currentParty) {
                                             if (!gamePlayer.getParty().getInvites().contains(gp)) {
                                                 currentParty.invites.remove(gp);
+                                                if (gamePlayer.getParty().getMember() == null) {
+                                                    log(gamePlayer, gp.getPlayer().getName() + "への招待期限が切れました!");
+                                                }
                                                 for (GamePlayer pm : gamePlayer.getParty().getMember()) {
                                                     log(pm, gp.getPlayer().getName() + "への招待期限が切れました!");
                                                 }
