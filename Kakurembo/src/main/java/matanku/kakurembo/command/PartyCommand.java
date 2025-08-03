@@ -112,6 +112,7 @@ public class PartyCommand implements CommandExecutor {
                         if (gamePlayer.getParty() == null) {
                             gamePlayer.setParty(new Party());
                             gamePlayer.getParty().member.add(gamePlayer);
+                            gamePlayer.getParty().setLeader(gamePlayer);
                         }
                         for (GamePlayer gp : HideAndSeek.getINSTANCE().getGame().getPlayers().values()) {
                             if (gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
@@ -150,6 +151,9 @@ public class PartyCommand implements CommandExecutor {
                     case "accept":
                         if (gamePlayer.getParty() == null) {
                             for (GamePlayer gp : HideAndSeek.getINSTANCE().getGame().getPlayers().values()) {
+                                if (gp.getParty().invites.isEmpty() && gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
+                                    log(gamePlayer, "その招待は無効または存在しません!");
+                                }
                                 if (gp.getParty().invites.contains(gamePlayer) && gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
                                     gp.getParty().invites.remove(gp);
                                     for (GamePlayer pm : gamePlayer.getParty().getMember()) {
