@@ -11,6 +11,6 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class Party {
     public GamePlayer leader;
-    public ArrayList<GamePlayer> member;
-    public ArrayList<GamePlayer> invites;
+    public ArrayList<GamePlayer> member = new ArrayList<>();
+    public ArrayList<GamePlayer> invites = new ArrayList<>();
 }
