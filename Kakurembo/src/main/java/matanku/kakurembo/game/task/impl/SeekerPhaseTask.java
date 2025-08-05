@@ -36,7 +36,7 @@ public class SeekerPhaseTask extends GameTask {
             cancel();
             game.end();
         }
-        if (tick == 60) {
+        if (tick == game.getSettings().getTimes().getOrDefault("glowing_time",180)) {
             for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
                 if (entry.getValue().getRole() == GameRole.HIDER) {
                     entry.getValue().getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,Integer.MAX_VALUE,255,true,false));
@@ -44,7 +44,7 @@ public class SeekerPhaseTask extends GameTask {
                 }
             }
         }
-        if (tick == 180) {
+        if (tick == game.getSettings().getTimes().getOrDefault("tracker_time",180)) {
             if (game.getSettings().isTrackerEnabled()) {
                 Common.broadcastMessage("<gray>[<red>!<gray>] 残り3分になったためシーカーに一番近くのハイダーとの距離が知らされました!");
                 tracker = true;
