@@ -1,5 +1,6 @@
 package matanku.kakurembo.enums;
 
+
 public enum GameState {
 
     WAITING,
@@ -7,6 +8,6 @@ public enum GameState {
     INSTRUCTION_PHASE,
     HIDING_PHASE,
     SEEKER_PHASE,
-    ENDING
+    ENDING;
 
 }

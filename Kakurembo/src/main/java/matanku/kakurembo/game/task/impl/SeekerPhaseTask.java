@@ -99,7 +99,6 @@ public class SeekerPhaseTask extends GameTask {
                                                 this.cancel();
                                                 return;
                                             }
-                                            HideAndSeek.getINSTANCE().getLogger().info("4block inai");
                                             entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 1.4f);
                                             count++;
                                         }
@@ -114,7 +113,7 @@ public class SeekerPhaseTask extends GameTask {
     }
 
     public void setProgressXP(Player player, int ticks) {
-        float progress = (float) Math.min(1.0, ticks / 60.0);
+        float progress = (float) Math.min(1.0, ticks / ((double)game.getSettings().getTimes().get("stun_cooldown")));
         player.setLevel(ticks);
         player.setExp(progress);
     }

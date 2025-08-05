@@ -18,6 +18,7 @@ import matanku.kakurembo.api.menu.button.ToggleButton;
 import matanku.kakurembo.api.menu.pagination.PaginatedMenu;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -34,6 +35,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
@@ -90,6 +92,14 @@ public class GameListener implements Listener {
             HideAndSeek.getGamePlayerByPlayer(player).setDisguises(null);
         }
 
+        for (World w : Bukkit.getWorlds()) {
+            for (Entity e : w.getEntities()) {
+                if (e.getMetadata(Game.DISGUISE_KEY).contains(new FixedMetadataValue(HideAndSeek.INSTANCE, player.getUniqueId()))) {
+                    e.remove();
+                }
+            }
+        }
+
         event.quitMessage(Common.text("<gray>[<red>-<gray>] <yellow>" + player.getName()));
 
         if (game.isStarted() && game.canEnd()) {
@@ -109,6 +119,10 @@ public class GameListener implements Listener {
 
                 if (gameEntity.getRole() == gameDamager.getRole()) {
                     event.setCancelled(true);
+                    return;
+                }
+                if (gameEntity.getRole() == GameRole.HIDER && gameDamager.getRole() == GameRole.SEEKER) {
+                    if (game.getSettings().isInstaKill()) gameEntity.getPlayer().setHealth(0.0D);
                     return;
                 }
             }
@@ -176,7 +190,8 @@ public class GameListener implements Listener {
                             if (gameDamager.getStanCooldown() == 0 || gameDamager.getStanCooldown() < 0) {
                                 entity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 255, true, false));
                                 entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 255, true, false));
-                                gameDamager.setStanCooldown(60);
+                                entity.playSound(entity.getLocation(),Sound.BLOCK_ANVIL_FALL,1f,1f);
+                                gameDamager.setStanCooldown(game.getSettings().getTimes().get("stun_cooldown"));
                             } else {
                                 Common.sendMessage(gameDamager.getPlayer(), "<red><bold>COOLDOWN! <!bold>あなたのスタンはクールダウン中です。" + (gameDamager.getStanCooldown()) + "秒後に使用してください!");
                                 event.setCancelled(true);
@@ -205,7 +220,7 @@ public class GameListener implements Listener {
         gamePlayer.getDisguises().getDisguise().stopDisguise();
         gamePlayer.setRole(GameRole.SEEKER);
         game.getMap().teleport(player);
-        player.getInventory().setContents(GameRole.SEEKER.getTools());
+        player.getInventory().addItem(Items.SWORD.getItem());
 
         for (PotionEffect pe : player.getActivePotionEffects()) {
             if (pe.getType() == PotionEffectType.GLOWING) {
@@ -361,7 +376,7 @@ public class GameListener implements Listener {
                         }
 
                         if (game.getSettings().isAntiCheatEnabled()) {
-                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER"};
+                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER", "SKULL"};
                             for (String string : disallowedBlocks) {
                                 if (block.getType().name().toUpperCase().contains(string)) {
                                     Common.sendMessage(player, "<red>あなたが変身しようとしたブロックは禁止されているブロックです！");
@@ -412,7 +427,7 @@ public class GameListener implements Listener {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
-            player.getInventory().setContents(GameRole.SEEKER.getTools());
+            player.getInventory().addItem(Items.SWORD.getItem());
             Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + gamePlayer.getFlagged() + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
             if (game.canEnd()) {
                 game.end();
@@ -560,24 +575,25 @@ public class GameListener implements Listener {
     @EventHandler
     public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
-        Component message = event.message();
+        String message = LegacyComponentSerializer.legacySection().serialize(event.message());
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
         if (gamePlayer != null) {
             if (gamePlayer.getFocusedChat() == ChatEnum.ALL) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    Common.sendMessage(p,"<gray>" + player.getName() + ": " + message);
+                    Common.sendMessage(p,Common.text("<gray>" + player.getName() + ": " + message));
                 }
             } else if (gamePlayer.getFocusedChat() == ChatEnum.PARTY) {
                 if (gamePlayer.getParty() == null) {
-                    Common.sendMessage(gamePlayer.getPlayer(),"Partyに入っていないため、全体チャットに移動しました。");
+                    Common.sendMessage(gamePlayer.getPlayer(),Common.text("<red>Partyに入っていないため、全体チャットに移動しました。"));
                     gamePlayer.setFocusedChat(ChatEnum.ALL);
                     return;
                 }
                 for (GamePlayer gp : gamePlayer.getParty().getMember()) {
-                    Common.sendMessage(gp.getPlayer(),"<blue>Party <dark_gray>> <gray>" + player.getName() +"<white>: " + message);
+                    Common.sendMessage(gp.getPlayer(),Common.text("<blue>Party <dark_gray>> <gray>" + player.getName() +"<white>: " + message));
                 }
             }
         }
+        event.setCancelled(true);
     }
 
 }

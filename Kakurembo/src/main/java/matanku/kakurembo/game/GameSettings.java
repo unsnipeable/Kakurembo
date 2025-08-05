@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.enums.SwordType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
 @Setter
 public class GameSettings {
@@ -13,12 +16,13 @@ public class GameSettings {
     private SwordType swordType = SwordType.NETHERITE;
     private int maxSeekers = -1;
     private int maxFlag = 20;
-    private int stanCooldown = 60;
     private boolean allowJoinAsSeekerAfterStarted = true;
     private boolean allowUnbalancedBlocks = true;
     private boolean trackerEnabled = true;
     private boolean heartBeatEnabled = true;
     private boolean antiCheatEnabled = true;
     private boolean swordFire = false;
+    private boolean instaKill = false;
 
+    private Map<String, Integer> times = new HashMap<>();
 }

@@ -1,5 +1,6 @@
 package matanku.kakurembo.menu;
 
+import matanku.kakurembo.enums.ConfigurableTimes;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.api.menu.Button;
@@ -17,7 +18,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.game.Game;
+import org.checkerframework.checker.units.qual.A;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -64,19 +67,8 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(1, new Button() {
-            @Override
-            public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.MAP).name("<green><bold>マップ").lore("","<gray>現在のマップ: " + (game.getSettings().getMap() == null ? "<red>未設定" : "<green>" + game.getSettings().getMap()),"","<yellow>クリックしてマップを選択").build();
-            }
 
-            @Override
-            public void clicked(Player player, ClickType clickType) {
-                new MapSelectMenu(GameSettingsMenu.this).openMenu(player);
-            }
-        });
-
-        buttons.put(2, new IntegerButton() {
+        buttons.put(1, new IntegerButton() {
             @Override
             public Material getMaterial() {
                 return Material.DIAMOND_SWORD;
@@ -124,7 +116,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(3, new ToggleButton() {
+        buttons.put(2, new ToggleButton() {
 
             @Override
             public Material getMaterial() {
@@ -153,7 +145,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(4, new ToggleButton() {
+        buttons.put(3, new ToggleButton() {
             @Override
             public String getOptionName() {
                 return "完全でないブロックに変身";
@@ -187,7 +179,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(5, new ToggleButton() {
+        buttons.put(4, new ToggleButton() {
             @Override
             public String getOptionName() {
                 return "アンチチート";
@@ -215,7 +207,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(6, new IntegerButton() {
+        buttons.put(5, new IntegerButton() {
             @Override
             public Material getMaterial() {
                 return Material.STONE_SWORD;
@@ -264,7 +256,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(7, new ToggleButton() {
+        buttons.put(6, new ToggleButton() {
             @Override
             public String getOptionName() {
                 return "心臓の音";
@@ -293,7 +285,7 @@ public class GameSettingsMenu extends Menu {
         });
 
 
-        buttons.put(8, new ToggleButton() {
+        buttons.put(7, new ToggleButton() {
             @Override
             public String getOptionName() {
                 return "トラッカー";
@@ -323,7 +315,7 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(9, new Button() {
+        buttons.put(8, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {
                 return new ItemBuilder(Material.IRON_SWORD).name("<green>剣の種類").lore("","<gray>種類: " + (game.getSettings().getSwordType() == null ? "<red>未設定" : "<green>" + game.getSettings().getSwordType().getName() + "<yellow> (CLICK)"),"","<gray>火属性: " + (game.getSettings().isSwordFire() ? "<green>有効" : "<red>無効") + "<yellow> (LSHIFT + CLICK)").enchantment(Enchantment.FIRE_ASPECT, 1).build();
@@ -343,55 +335,66 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-
-        buttons.put(10, new IntegerButton() {
-            @Override
-            public Material getMaterial() {
-                return Material.TRIPWIRE_HOOK;
-            }
-
+        buttons.put(9, new ToggleButton() {
             @Override
             public String getOptionName() {
-                return "スタンクールダウン";
+                return "インスタキル";
             }
 
+            @Override
+            public Material getMaterial() {
+                return Material.GOLDEN_SWORD;
+            }
 
             @Override
             public String[] getDescription() {
-                return new String[]{"スタンが使えるクールダウン"};
+                return new String[]{"<gray>シーカーが1発でハイダーを倒すことができます。"};
             }
 
             @Override
-            public String getCurrentValue() {
-                return game.getSettings().getMaxFlag() == -1 ? "<red>未設定" : game.getSettings().getMaxFlag() + "";
-            }
-
-            @Override
-            public void plus1(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 1));
-            }
-
-            @Override
-            public void plus10(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 10));
-            }
-
-            @Override
-            public void minus1(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 1));
-            }
-
-            @Override
-            public void minus10(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 10));
+            public boolean isEnabled(Player player) {
+                return game.getSettings().isInstaKill();
             }
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                super.clicked(player, clickType);
+                game.getSettings().setInstaKill(!isEnabled(player));
                 openMenu(player);
             }
         });
+
+
+        buttons.put(23, new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                return new ItemBuilder(Material.MAP).name("<green><bold>マップ").lore("","<gray>現在のマップ: " + (game.getSettings().getMap() == null ? "<red>未設定" : "<green>" + game.getSettings().getMap()),"","<yellow>クリックしてマップを選択").build();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                new MapSelectMenu(GameSettingsMenu.this).openMenu(player);
+            }
+        });
+        buttons.put(24, new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                ArrayList<String> lore = new ArrayList<>();
+                lore.add("");
+                for (ConfigurableTimes ct : ConfigurableTimes.values()) {
+                    lore.add("<gray>" + ct.displayName + ": <gold>" + game.getSettings().getTimes().get(ct.id) + "秒");
+                }
+                lore.add("");
+                lore.add("<yellow>クリックして時間設定を変更");
+
+                return new ItemBuilder(Material.CLOCK).name("<green><bold>時間設定").lore(lore).build();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                new TimeSetMenu().openMenu(player);
+            }
+        });
+
         buttons.put(25, new Button() {
             @Override
             public String getOptionName() {

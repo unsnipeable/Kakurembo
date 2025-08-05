@@ -1,5 +1,6 @@
 package matanku.kakurembo.game.task.impl;
 
+import matanku.kakurembo.game.GameSettings;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
@@ -16,7 +17,7 @@ public class HiderPhaseTask extends GameTask {
     public void onRun() {
         if (tick == 0) {
             cancel();
-            game.startSeekerPhase(Config.GAME_TIME_SECOND);
+            game.startSeekerPhase(game.getSettings().getTimes().getOrDefault("game_time",600));
         }
         if (Util.ANNOUNCE.contains(tick)) {
             Common.broadcastSound(Sound.UI_BUTTON_CLICK);

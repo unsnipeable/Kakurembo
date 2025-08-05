@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class PartyCommand implements CommandExecutor {
 
@@ -41,15 +42,25 @@ public class PartyCommand implements CommandExecutor {
                         log(player, helpMessage);
                         break;
                     case "list":
-                        ArrayList<String> list = new ArrayList<>();
-                        list.add("現在のParty:");
-                        list.add("リーダー: <gray>" + gamePlayer.getParty().getLeader());
-                        if (gamePlayer.getParty().getMember() == null) {
-                            list.add("メンバー: <gray>なし");
+                        if (gamePlayer.getParty() == null) {
+
                         } else {
-                            list.add("メンバー: <gray>" + gamePlayer.getParty().getMember());
+                            ArrayList<String> list = new ArrayList<>();
+                            list.add("現在のParty:");
+                            list.add("リーダー: <gray>" + gamePlayer.getParty().getLeader().getPlayer().getName());
+                            ArrayList<GamePlayer> mem = new ArrayList<>(gamePlayer.getParty().getMember());
+                            mem.remove(gamePlayer);
+                            if (mem.isEmpty()) {
+                                list.add("メンバー: <gray>なし");
+                            } else {
+                                ArrayList<String> members = new ArrayList<>();
+                                for (GamePlayer gp : mem) {
+                                    members.add(gp.getPlayer().getName());
+                                }
+                                list.add("メンバー: <gray>" + members);
+                            }
+                            log(gamePlayer, list.toArray(new String[0]));
                         }
-                        log(gamePlayer, list.toArray(new String[0]));
                         break;
                     case "disband":
                         if (gamePlayer.getParty() == null) {
@@ -119,6 +130,9 @@ public class PartyCommand implements CommandExecutor {
                                 if (gp.getParty() == gamePlayer.getParty()) {
                                     log(gamePlayer, "そのプレイヤーはこのPartyに参加しています!");
                                 } else {
+                                    if (gamePlayer.getParty().invites.contains(gp)) {
+                                        log(gamePlayer, "そのプレイヤーはもうこのPartyに招待されています!");
+                                    }
                                     if (gamePlayer.getParty().getMember() == null) {
                                         log(gamePlayer, player.getName() + "が" + gp.getPlayer().getName() + "を招待しました!", "<red>60<yellow>秒以内なら入ることができます!");
                                     }
@@ -143,23 +157,23 @@ public class PartyCommand implements CommandExecutor {
                                         }
                                     }, 1200L);
                                 }
-                            } else {
-                                log(gamePlayer, "そのプレイヤーはオフラインです!");
+                                return false;
                             }
                         }
+                        log(gamePlayer, "そのプレイヤーはオフラインです!");
+
                         break;
                     case "accept":
                         if (gamePlayer.getParty() == null) {
                             for (GamePlayer gp : HideAndSeek.getINSTANCE().getGame().getPlayers().values()) {
-                                if (gp.getParty().invites.isEmpty() && gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
+                                if (gp.getParty() == null || (gp.getParty().invites.isEmpty() && gp.getPlayer().getName().equalsIgnoreCase(args[1]))) {
                                     log(gamePlayer, "その招待は無効または存在しません!");
-                                }
-                                if (gp.getParty().invites.contains(gamePlayer) && gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
+                                } else if (gp.getParty().invites.contains(gamePlayer) && gp.getPlayer().getName().equalsIgnoreCase(args[1])) {
                                     gp.getParty().invites.remove(gp);
+                                    gp.getParty().getMember().add(gamePlayer);
                                     for (GamePlayer pm : gamePlayer.getParty().getMember()) {
                                         log(pm, gamePlayer.getPlayer().getName() + "がPartyに参加しました!");
                                     }
-                                    gp.getParty().member.add(gamePlayer);
                                 } else {
                                     log(gamePlayer, "その招待は無効または存在しません!");
                                 }
