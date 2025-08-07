@@ -147,6 +147,11 @@ public class ItemBuilder implements Listener {
 		return this;
 	}
 
+	public ItemBuilder enchantmentBoolean(Enchantment enchantment, int level, boolean bool) {
+		if (bool) is.addUnsafeEnchantment(enchantment, level);
+		return this;
+	}
+
 	public ItemBuilder enchantment(Enchantment enchantment, int level) {
 		is.addUnsafeEnchantment(enchantment, level);
 		return this;

@@ -3,12 +3,14 @@ package matanku.kakurembo.game;
 import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.Config;
+import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.enums.DisguiseTypes;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.enums.GameState;
 import matanku.kakurembo.game.disguise.DisguiseData;
 import matanku.kakurembo.game.task.impl.*;
 import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.player.Replay;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.bossbar.impl.GlobalBossBar;
@@ -17,6 +19,7 @@ import matanku.kakurembo.api.util.TaskTicker;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -34,6 +37,12 @@ public class Game {
     private GlobalBossBar bossBar;
     private GlobalBossBar gamePlayersBossBar;
     private TaskTicker currentTask;
+    private Replay replay;
+    private int tick;
+
+    public Game returnThis() {
+        return this;
+    }
 
     public void startCountdown(int seconds) {
         if (loaded) return;
@@ -41,6 +50,8 @@ public class Game {
         bossBar = new GlobalBossBar(BossBar.bossBar(Common.text("<yellow>準備時間"), 1, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS), "game");
         gamePlayersBossBar = new GlobalBossBar(BossBar.bossBar(Common.text("<aqua>またんくかくれんぼ"),0,BossBar.Color.BLUE, BossBar.Overlay.PROGRESS), "nokori");
         currentTask = new CountdownPhaseTask(seconds);
+        replay = new Replay();
+        tick = 0;
         loaded = true;
     }
 
@@ -53,7 +64,7 @@ public class Game {
         }
         bossBar.name("<yellow>マップを生成しています").progress(1);
 
-        map.generateMap(bool -> {
+        map.generateMap("world_game", bool -> {
             if (bool) {
                 startInstructionPhase(10);
             } else {
@@ -128,6 +139,22 @@ public class Game {
                 player.getInventory().setContents(role.getTools());
             }
         }
+
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                tick++;
+                if (currentTask instanceof EndTask) {
+                    for (GamePlayer gamePlayer : returnThis().getPlayers().values()) {
+                        gamePlayer.getPlayerReplay().add(replay);
+                    }
+                    cancel();
+                    return;
+                }
+                replay.recode(returnThis(),tick);
+            }
+        }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 1L);
 
         currentTask = new SeekerPhaseTask(seconds);
     }

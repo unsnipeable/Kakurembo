@@ -46,7 +46,7 @@ public class TimeSetMenu extends PaginatedMenu {
 
                 @Override
                 public String getCurrentValue() {
-                    return game.getSettings().getTimes().getOrDefault(gs.id,-1) == -1 ? "<red>未設定" : game.getSettings().getTimes().getOrDefault(gs.id,-1) + "";
+                    return game.getSettings().getTimes().getOrDefault(gs.id,-1) == -1 ? "<red>未設定" : ((gs.nokori?"残り":"") + game.getSettings().getTimes().getOrDefault(gs.id,-1) + "秒");
                 }
 
                 @Override

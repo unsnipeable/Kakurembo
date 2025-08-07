@@ -7,6 +7,7 @@ import matanku.kakurembo.api.util.Symbols;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.player.Replay;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,13 +31,17 @@ public class SeekerPhaseTask extends GameTask {
     @Setter
     public static boolean tracker = false;
 
+    public static boolean removeRunnable = false;
+
     @Override
     public void onRun() {
         if (tick == 0) {
             tracker = false;
+
             cancel();
             game.end();
         }
+
         if (tick == game.getSettings().getTimes().getOrDefault("glowing_time",180)) {
             for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
                 if (entry.getValue().getRole() == GameRole.HIDER) {
@@ -95,6 +101,9 @@ public class SeekerPhaseTask extends GameTask {
 
                                         @Override
                                         public void run() {
+                                            if (removeRunnable) {
+                                                this.cancel();
+                                            }
                                             if (count >= 2) {
                                                 this.cancel();
                                                 return;

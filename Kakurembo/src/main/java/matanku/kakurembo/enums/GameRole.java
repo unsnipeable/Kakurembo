@@ -2,6 +2,9 @@ package matanku.kakurembo.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import matanku.kakurembo.HideAndSeek;
+import matanku.kakurembo.api.util.ItemBuilder;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import matanku.kakurembo.Items;
 
@@ -17,7 +20,7 @@ public enum GameRole {
             Items.STUN.getItem()
     }),
     SEEKER("シーカー", "<red>", "制限時間内にハイダー全員を見つける", new ItemStack[]{
-            Items.SWORD.getItem()
+            null
     });
 
     private final String name;

@@ -24,5 +24,11 @@ public class GameSettings {
     private boolean swordFire = false;
     private boolean instaKill = false;
 
-    private Map<String, Integer> times = new HashMap<>();
+    private Map<String, Integer> times = new HashMap<>() {{
+        put("hider_time", 30);
+        put("game_time", 600);
+        put("tracker_time", 180);
+        put("glowing_time", 60);
+        put("stun_cooldown", 60);
+    }};
 }

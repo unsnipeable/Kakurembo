@@ -22,18 +22,22 @@ public class GameMap {
         }
     }
 
-    public void generateMap(Consumer<Boolean> callback) {
-        Bukkit.unloadWorld("world_game", false);
+    public void generateMap(String worldName, Consumer<Boolean> callback) {
+        removeMap(worldName);
 
         try {
-            Util.deleteFile(new File("world_game"));
-            Util.copyFolder(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/" + HideAndSeek.INSTANCE.getGame().getSettings().getMap()), new File(Bukkit.getWorldContainer() + File.separator + "world_game"));
-            world = Util.loadWorld("world_game");
+            Util.copyFolder(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/" + HideAndSeek.INSTANCE.getGame().getSettings().getMap()), new File(Bukkit.getWorldContainer() + File.separator + worldName));
+            world = Util.loadWorld(worldName);
             callback.accept(true);
         } catch (Exception e) {
             e.printStackTrace();
             callback.accept(false);
         }
+    }
+
+    public static void removeMap(String worldName) {
+        Bukkit.unloadWorld(worldName, false);
+        Util.deleteFile(new File(worldName));
     }
 
     public void teleport(Player player) {

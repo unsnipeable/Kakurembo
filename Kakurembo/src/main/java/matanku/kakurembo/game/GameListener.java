@@ -3,6 +3,7 @@ package matanku.kakurembo.game;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import matanku.kakurembo.Config;
 import matanku.kakurembo.Items;
+import matanku.kakurembo.api.util.ItemBuilder;
 import matanku.kakurembo.enums.*;
 import matanku.kakurembo.game.task.impl.HiderPhaseTask;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
@@ -21,6 +22,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,6 +63,7 @@ public class GameListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        GameMap.removeMap("replay_" + player.getName());
         Game game = HideAndSeek.INSTANCE.getGame();
 
         game.getPlayers().putIfAbsent(player.getUniqueId(), new GamePlayer(player.getUniqueId()));
@@ -73,7 +76,7 @@ public class GameListener implements Listener {
             Common.sendMessage(player, "<aqua>あなたは途中参加したため、" + GameRole.SEEKER.getColoredName() + "として参加しました!");
             if (game.getCurrentTask() instanceof SeekerPhaseTask) {
                 game.getMap().teleport(player);
-                player.getInventory().addItem(Items.SWORD.getItem());
+                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
             } else {
                 player.teleport(Config.LOBBY_LOCATION);
             }
@@ -86,6 +89,7 @@ public class GameListener implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Game game = HideAndSeek.INSTANCE.getGame();
+        GameMap.removeMap("replay_" + player.getName());
 
         game.getPlayers().remove(player.getUniqueId());
         if (HideAndSeek.getGamePlayerByPlayer(player) != null) {
@@ -122,8 +126,14 @@ public class GameListener implements Listener {
                     return;
                 }
                 if (gameEntity.getRole() == GameRole.HIDER && gameDamager.getRole() == GameRole.SEEKER) {
-                    if (game.getSettings().isInstaKill()) gameEntity.getPlayer().setHealth(0.0D);
-                    return;
+                    if (game.getSettings().isInstaKill()) {
+                        event.setCancelled(true);
+                        GamePlayerDeathEvent e = new GamePlayerDeathEvent(entity,damager);
+                        e.callEvent();
+                        if (e.isCancelled()) {
+                            event.setDamage(0);
+                        }
+                    }
                 }
             }
         }
@@ -220,7 +230,7 @@ public class GameListener implements Listener {
         gamePlayer.getDisguises().getDisguise().stopDisguise();
         gamePlayer.setRole(GameRole.SEEKER);
         game.getMap().teleport(player);
-        player.getInventory().addItem(Items.SWORD.getItem());
+        player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
 
         for (PotionEffect pe : player.getActivePotionEffects()) {
             if (pe.getType() == PotionEffectType.GLOWING) {
@@ -376,7 +386,7 @@ public class GameListener implements Listener {
                         }
 
                         if (game.getSettings().isAntiCheatEnabled()) {
-                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER", "SKULL"};
+                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER", "SKULL", "DECORATED"};
                             for (String string : disallowedBlocks) {
                                 if (block.getType().name().toUpperCase().contains(string)) {
                                     Common.sendMessage(player, "<red>あなたが変身しようとしたブロックは禁止されているブロックです！");
@@ -427,7 +437,7 @@ public class GameListener implements Listener {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
-            player.getInventory().addItem(Items.SWORD.getItem());
+            player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
             Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + gamePlayer.getFlagged() + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
             if (game.canEnd()) {
                 game.end();
@@ -576,22 +586,8 @@ public class GameListener implements Listener {
     public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         String message = LegacyComponentSerializer.legacySection().serialize(event.message());
-        GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
-        if (gamePlayer != null) {
-            if (gamePlayer.getFocusedChat() == ChatEnum.ALL) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    Common.sendMessage(p,Common.text("<gray>" + player.getName() + ": " + message));
-                }
-            } else if (gamePlayer.getFocusedChat() == ChatEnum.PARTY) {
-                if (gamePlayer.getParty() == null) {
-                    Common.sendMessage(gamePlayer.getPlayer(),Common.text("<red>Partyに入っていないため、全体チャットに移動しました。"));
-                    gamePlayer.setFocusedChat(ChatEnum.ALL);
-                    return;
-                }
-                for (GamePlayer gp : gamePlayer.getParty().getMember()) {
-                    Common.sendMessage(gp.getPlayer(),Common.text("<blue>Party <dark_gray>> <gray>" + player.getName() +"<white>: " + message));
-                }
-            }
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            Common.sendMessage(p,Common.text("<gold>" + player.getName() + "<white>: " + message));
         }
         event.setCancelled(true);
     }

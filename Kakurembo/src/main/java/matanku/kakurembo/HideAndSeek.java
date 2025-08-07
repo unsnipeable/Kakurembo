@@ -50,6 +50,7 @@ public final class HideAndSeek extends JavaPlugin {
         return null;
     }
 
+
     @Override
     public void onEnable() {
         INSTANCE = this;
@@ -71,10 +72,7 @@ public final class HideAndSeek extends JavaPlugin {
         this.getCommand("settings").setExecutor(new SettingsCommand());
         this.getCommand("stopdisguise").setExecutor(new StopDisguiseCommand());
         this.getCommand("stoptask").setExecutor(new StopTaskCommand());
-        this.getCommand("party").setExecutor(new PartyCommand());
-        this.getCommand("p").setExecutor(new PartyCommand());
-        this.getCommand("chat").setExecutor(new ChatCommand());
-        this.getCommand("ch").setExecutor(new ChatCommand());
+        this.getCommand("replay").setExecutor(new ReplayCommand());
 
         new BukkitRunnable() {
             @Override
