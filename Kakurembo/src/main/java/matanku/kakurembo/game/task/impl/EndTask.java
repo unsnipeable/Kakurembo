@@ -20,27 +20,47 @@ public class EndTask extends GameTask {
     public EndTask() {
         super(7);
 
-        if (game.getPlayers().values().stream().noneMatch(gp -> gp.getRole() == GameRole.HIDER)) {
-            winner = GameRole.SEEKER;
+        if (game.getSettings().isAmongUs()) {
+            if (game.getCompTask() == game.getFullTask()) {
+                winner = GameRole.HIDER;
+            } else {
+                winner = GameRole.SEEKER;
+            }
         } else {
-            winner = GameRole.HIDER;
+            if (game.getPlayers().values().stream().noneMatch(gp -> gp.getRole() == GameRole.HIDER)) {
+                winner = GameRole.SEEKER;
+            } else {
+                winner = GameRole.HIDER;
+            }
         }
     }
 
     @Override
     public void preRun() {
 
-        Common.broadcastMessage(
-                "",
-                "<yellow>ゲームオーバー!",
-                winner.getColoredName() + "<green>が勝利しました!",
-                winner.getColoredName() + "<yellow>そのチームのメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>")),
-                ""
-        );
+        if (game.getSettings().isAmongUs()) {
+            Common.broadcastMessage(
+                    "",
+                    "<yellow>ゲームオーバー!",
+                    winner.getAmongUsName() + "<green>が勝利しました!",
+                    winner.getAmongUsName() + "<yellow>そのチームのメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>")),
+                    ""
+            );
+        } else {
+            Common.broadcastMessage(
+                    "",
+                    "<yellow>ゲームオーバー!",
+                    winner.getColoredName() + "<green>が勝利しました!",
+                    winner.getColoredName() + "<yellow>そのチームのメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>")),
+                    ""
+            );
+        }
 
 
-        game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
-        game.getBossBar().show();
+        if (!game.getSettings().isAmongUs()) {
+            game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
+            game.getBossBar().show();
+        }
 
 
         game.setLoaded(false);

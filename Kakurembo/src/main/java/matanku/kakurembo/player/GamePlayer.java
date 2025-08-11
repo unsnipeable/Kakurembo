@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import matanku.kakurembo.enums.CheckPointStatus;
+import matanku.kakurembo.game.amongUs.GameAmongUsTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class GamePlayer {
     @Setter
     private DisguiseData disguises;
 
-    private ArrayList<Replay> playerReplay = new ArrayList<>();
+    private GameAmongUsTask[] playerTasks;
 
     private boolean parkour = false;
     private int parkourTime;

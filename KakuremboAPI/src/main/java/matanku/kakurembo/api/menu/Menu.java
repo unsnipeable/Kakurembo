@@ -26,14 +26,18 @@ public class Menu {
     public void openMenu(Player player) {
         Inventory gui = Bukkit.createInventory(null, getSize(), getTitle(player));
 
-        this.getButtons(player).forEach((k, v) -> {
-            v.guiSlot = k;
-            gui.setItem(k, v.getButtonItem(player));
-        });
+        if (this.getButtons(player) != null) {
+            this.getButtons(player).forEach((k, v) -> {
+                v.guiSlot = k;
+                gui.setItem(k, v.getButtonItem(player));
+            });
+        }
 
         player.openInventory(gui);
 
     }
+
+    public boolean isAmongUsTaskMenu = false;
 
     public int getSize() {
         return 9;

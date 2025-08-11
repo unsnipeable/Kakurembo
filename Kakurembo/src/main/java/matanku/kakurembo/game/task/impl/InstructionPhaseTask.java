@@ -16,7 +16,11 @@ public class InstructionPhaseTask extends GameTask {
     public void onRun() {
         if (tick == 0) {
             cancel();
-            game.startHiderPhase(game.getSettings().getTimes().getOrDefault("hider_time",180));
+            if (game.getSettings().isAmongUs()) {
+                game.startSeekerPhase(Integer.MAX_VALUE);
+            } else {
+                game.startHiderPhase(game.getSettings().getTimes().getOrDefault("hider_time",180));
+            }
         }
         if (Util.ANNOUNCE.contains(tick)) {
             Common.broadcastSound(Sound.UI_BUTTON_CLICK);

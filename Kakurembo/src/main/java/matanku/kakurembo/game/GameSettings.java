@@ -3,6 +3,7 @@ package matanku.kakurembo.game;
 import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.enums.SwordType;
+import org.bukkit.Material;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,8 @@ public class GameSettings {
     private boolean allowPublicRoleSelect = false;
     private String map = null;
     private SwordType swordType = SwordType.NETHERITE;
-    private int maxSeekers = -1;
-    private int maxFlag = 20;
+    private int maxSeekers = 1;
+    private int maxFlag = 0;
     private boolean allowJoinAsSeekerAfterStarted = true;
     private boolean allowUnbalancedBlocks = true;
     private boolean trackerEnabled = true;
@@ -23,6 +24,8 @@ public class GameSettings {
     private boolean antiCheatEnabled = true;
     private boolean swordFire = false;
     private boolean instaKill = false;
+    private boolean amongUs = false;
+    private int amongUsTasks = 5;
 
     private Map<String, Integer> times = new HashMap<>() {{
         put("hider_time", 30);

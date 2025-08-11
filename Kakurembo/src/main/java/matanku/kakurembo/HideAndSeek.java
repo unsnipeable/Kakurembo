@@ -72,7 +72,7 @@ public final class HideAndSeek extends JavaPlugin {
         this.getCommand("settings").setExecutor(new SettingsCommand());
         this.getCommand("stopdisguise").setExecutor(new StopDisguiseCommand());
         this.getCommand("stoptask").setExecutor(new StopTaskCommand());
-        this.getCommand("replay").setExecutor(new ReplayCommand());
+        this.getCommand("end").setExecutor(new EndCommand());
 
         new BukkitRunnable() {
             @Override

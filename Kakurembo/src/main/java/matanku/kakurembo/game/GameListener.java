@@ -63,7 +63,6 @@ public class GameListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        GameMap.removeMap("replay_" + player.getName());
         Game game = HideAndSeek.INSTANCE.getGame();
 
         game.getPlayers().putIfAbsent(player.getUniqueId(), new GamePlayer(player.getUniqueId()));
@@ -89,7 +88,6 @@ public class GameListener implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Game game = HideAndSeek.INSTANCE.getGame();
-        GameMap.removeMap("replay_" + player.getName());
 
         game.getPlayers().remove(player.getUniqueId());
         if (HideAndSeek.getGamePlayerByPlayer(player) != null) {
@@ -126,7 +124,7 @@ public class GameListener implements Listener {
                     return;
                 }
                 if (gameEntity.getRole() == GameRole.HIDER && gameDamager.getRole() == GameRole.SEEKER) {
-                    if (game.getSettings().isInstaKill()) {
+                    if (game.getSettings().isInstaKill() || game.getSettings().isAmongUs()) {
                         event.setCancelled(true);
                         GamePlayerDeathEvent e = new GamePlayerDeathEvent(entity,damager);
                         e.callEvent();
@@ -184,6 +182,11 @@ public class GameListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         Game game = HideAndSeek.INSTANCE.getGame();
         if (event.getEntity() instanceof Player entity && event.getDamager() instanceof Player damager) {
+            if (entity.getAllowFlight() || damager.getAllowFlight()) {
+                event.setCancelled(true);
+                return;
+            }
+
             GamePlayer gameEntity = game.getGamePlayer(entity);
             GamePlayer gameDamager = game.getGamePlayer(damager);
 
@@ -192,7 +195,7 @@ public class GameListener implements Listener {
                 return;
             }
 
-            if (gameEntity.getRole() == GameRole.SEEKER) {
+            if (gameEntity.getRole() == GameRole.SEEKER || game.getSettings().isAmongUs()) {
                 try {
                     ItemStack item = gameDamager.getPlayer().getInventory().getItemInMainHand();
                     if (item != null) {
@@ -225,22 +228,34 @@ public class GameListener implements Listener {
         Player player = event.getPlayer();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
-        Common.broadcastMessage("<red><bold>ELIMINATE! <!bold>" +gamePlayer.getRole().getColor() + player.getName() + "<red>は" + event.getAttacker().getName() +  "に倒され，" + GameRole.SEEKER.getColoredName() + " <red>になりました!");
+        if (game.getSettings().isAmongUs()) {
+            player.setHealth(20.0D);
+            player.setAllowFlight(true);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE,255,true,false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 3,255,true,false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 3,255,true,false));
+            player.playSound(player.getLocation(),Sound.BLOCK_ANVIL_FALL,1,1);
+            gamePlayer.getDisguises().getDisguise().stopDisguise();
+            Common.sendMessage(player, "<red><bold>DIED! <!bold>あなたは" + GameRole.SEEKER.getAmongUsName() + "に殺害されました");
+            player.getInventory().clear();
+        } else {
+            Common.broadcastMessage("<red><bold>ELIMINATE! <!bold>" + gamePlayer.getRole().getColor() + player.getName() + "<red>は" + event.getAttacker().getName() + "に倒され，" + GameRole.SEEKER.getColoredName() + " <red>になりました!");
 
-        gamePlayer.getDisguises().getDisguise().stopDisguise();
-        gamePlayer.setRole(GameRole.SEEKER);
-        game.getMap().teleport(player);
-        player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
+            gamePlayer.getDisguises().getDisguise().stopDisguise();
+            gamePlayer.setRole(GameRole.SEEKER);
+            game.getMap().teleport(player);
+            player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, game.getSettings().isSwordFire()).build(true));
 
-        for (PotionEffect pe : player.getActivePotionEffects()) {
-            if (pe.getType() == PotionEffectType.GLOWING) {
-                player.removePotionEffect(PotionEffectType.GLOWING);
+            for (PotionEffect pe : player.getActivePotionEffects()) {
+                if (pe.getType() == PotionEffectType.GLOWING) {
+                    player.removePotionEffect(PotionEffectType.GLOWING);
+                }
             }
-        }
-        Common.sendMessage(player, "","<yellow>あなたは " + GameRole.SEEKER.getColoredName() + "<yellow> に見つかってしまったため、 " + gamePlayer.getRole().getColoredName() + "<yellow> になりました！");
+            Common.sendMessage(player, "", "<yellow>あなたは " + GameRole.SEEKER.getColoredName() + "<yellow> に見つかってしまったため、 " + gamePlayer.getRole().getColoredName() + "<yellow> になりました！");
 
-        Common.sendMessage(player, "<yellow>勝利条件: <dark_aqua>" + gamePlayer.getRole().getGoal());
-        player.setHealth(20.0D);
+            Common.sendMessage(player, "<yellow>勝利条件: <dark_aqua>" + gamePlayer.getRole().getGoal());
+            player.setHealth(20.0D);
+        }
         if (game.canEnd()) {
             game.end();
         }
@@ -375,7 +390,17 @@ public class GameListener implements Listener {
         }
 
         if (game.isStarted()) {
-            if (game.getGamePlayer(player).getRole() == GameRole.HIDER) {
+            if (game.getSettings().isAmongUs()) {
+                Block playerBlock = player.getLocation().getBlock();
+                boolean isVent = player.getLocation().getBlock().getLocation().clone().add(0,-1,0).getBlock().getType() == Material.BASALT;
+
+                if (playerBlock.getType() == Material.IRON_TRAPDOOR) {
+                    if (isVent) {
+                        // vent
+                    }
+                }
+            }
+            if (game.getSettings().isAmongUs() || game.getGamePlayer(player).getRole() == GameRole.HIDER) {
                 if (itemStack != null) {
                     if (itemStack.equals(Items.TRANSFORM_TOOL.getItem()) && block != null && block.getType() != Material.AIR && block.getType() != Material.BARRIER) {
                         BoundingBox box = block.getBoundingBox();
@@ -432,8 +457,11 @@ public class GameListener implements Listener {
     public void flag(GamePlayer gamePlayer, Location blockLocSetBack, Game game, Player player) {
         if (!game.getSettings().isAntiCheatEnabled()) return;
         gamePlayer.getPlayer().teleport(blockLocSetBack);
+        if (game.getSettings().getMaxFlag() >= 0) {
+            return;
+        }
         gamePlayer.setFlagged(gamePlayer.getFlagged()+1);
-        if (gamePlayer.getFlagged() >= 20) {
+        if (gamePlayer.getFlagged() >= game.getSettings().getMaxFlag()) {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
@@ -532,14 +560,30 @@ public class GameListener implements Listener {
         for (Menu menu : Registers.menus) {
             menu.getButtons(player).forEach((k, v) -> {
                 if (v.getButtonItem(player).isSimilar(is)) {
-                    clicked(v,player, clickType);
+                    if (menu.isAmongUsTaskMenu) {
+                        // code amongUs
+                    } else {
+                        if (HideAndSeek.INSTANCE.getGame().isStarted()) {
+                            if (v instanceof IntegerButton || v instanceof ToggleButton) {
+                                Common.sendMessage(player, "<red>試合が始まっているため、読み取り専用です。");
+                                event.setCancelled(true);
+                            }
+                        } else {
+                            clicked(v,player, clickType);
+                        }
+                    }
                 }
             });
         }
         for (PaginatedMenu menu : Registers.paginatedMenus) {
             menu.getAllPagesButtons(player).forEach((k, v) -> {
                 if (v.getButtonItem(player).isSimilar(is)) {
-                    clicked(v,player, clickType);
+                    if (HideAndSeek.INSTANCE.getGame().isStarted()) {
+                        Common.sendMessage(player, "<red>試合が始まっているため、読み取り専用です。");
+                        event.setCancelled(true);
+                    } else {
+                        clicked(v, player, clickType);
+                    }
                 }
             });
         }

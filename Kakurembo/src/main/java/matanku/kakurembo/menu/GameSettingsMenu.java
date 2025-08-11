@@ -364,6 +364,68 @@ public class GameSettingsMenu extends Menu {
         });
 
 
+        buttons.put(10, new Button() {
+            @Override
+            public ItemStack getButtonItem(Player player) {
+                return new ItemBuilder(Material.IRON_SWORD).name("Among Usモード").lore((game.getSettings().isAmongUs() ? "<green>有効" : "<red>無効")).build();
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                Common.sendMessage(player, "<light_purple><bold>AMONG US! <!bold>AmongUsモードは現在" + (game.getSettings().isAmongUs() ? "<green>有効化" : "<red>無効化") + "<light_purple>されています! " + (!game.getSettings().isAmongUs() ? "<green>有効化" : "<red>無効化") + "<light_purple>するには、MapをAmongUs" + (game.getSettings().isAmongUs() ? "から他のMapに" : "に") + "変更してください!");
+                player.closeInventory();
+            }
+        });
+
+        buttons.put(11, new IntegerButton() {
+            @Override
+            public Material getMaterial() {
+                return Material.PAPER;
+            }
+
+            @Override
+            public String getOptionName() {
+                return "Among USモードのタスク数";
+            }
+
+
+            @Override
+            public String[] getDescription() {
+                return new String[]{"クルーメイトが行う必要のあるタスクの数です。"};
+            }
+
+            @Override
+            public String getCurrentValue() {
+                return game.getSettings().getAmongUsTasks() == -1 ? "<red>未設定" : game.getSettings().getAmongUsTasks() + "";
+            }
+
+            @Override
+            public void plus1(Player player) {
+                game.getSettings().setAmongUsTasks(Math.max(0, game.getSettings().getAmongUsTasks() + 1));
+            }
+
+            @Override
+            public void plus10(Player player) {
+                game.getSettings().setAmongUsTasks(Math.max(0, game.getSettings().getAmongUsTasks() + 10));
+            }
+
+            @Override
+            public void minus1(Player player) {
+                game.getSettings().setAmongUsTasks(Math.max(0, game.getSettings().getAmongUsTasks() - 1));
+            }
+
+            @Override
+            public void minus10(Player player) {
+                game.getSettings().setAmongUsTasks(Math.max(0, game.getSettings().getAmongUsTasks() - 10));
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                super.clicked(player, clickType);
+                openMenu(player);
+            }
+        });
+
         buttons.put(23, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {

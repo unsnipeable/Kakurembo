@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 public class GameMap {
 
     private World world;
+    private String name;
 
     public GameMap() {
         File mapFolder = new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/");
@@ -26,7 +27,8 @@ public class GameMap {
         removeMap(worldName);
 
         try {
-            Util.copyFolder(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/" + HideAndSeek.INSTANCE.getGame().getSettings().getMap()), new File(Bukkit.getWorldContainer() + File.separator + worldName));
+            name = HideAndSeek.INSTANCE.getGame().getSettings().getMap();
+            Util.copyFolder(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/" + getName()), new File(Bukkit.getWorldContainer() + File.separator + worldName));
             world = Util.loadWorld(worldName);
             callback.accept(true);
         } catch (Exception e) {

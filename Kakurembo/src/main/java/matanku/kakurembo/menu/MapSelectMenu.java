@@ -41,13 +41,16 @@ public class MapSelectMenu extends PaginatedMenu {
             buttons.put(buttons.size(), new Button() {
                 @Override
                 public ItemStack getButtonItem(Player player) {
-                    return new ItemBuilder(Material.MAP).name("<green>" + file.getName()).lore("", mapsSelection.contains(file.getName()) ? "<yellow>クリックしてマップを選択してください!" : "<red>マップはまだ設定されていません").build();
+                    return new ItemBuilder((file.getName().toLowerCase().toLowerCase().contains("amongus") ? Material.IRON_SWORD : Material.MAP)).name("<green>" + file.getName()).lore("", mapsSelection.contains(file.getName()) ? "<yellow>クリックしてマップを選択してください!" : "<red>マップはまだ設定されていません").build();
                 }
 
                 @Override
                 public void clicked(Player player, ClickType clickType) {
                     if (mapsSelection.contains(file.getName())) {
                         game.getSettings().setMap(file.getName());
+
+                            game.getSettings().setAmongUs(file.getName().toLowerCase().contains("among"));
+
                         backMenu.openMenu(player);
                     }
                 }
