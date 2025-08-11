@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import matanku.kakurembo.enums.CheckPointStatus;
 import matanku.kakurembo.game.amongUs.GameAmongUsTask;
+import matanku.kakurembo.game.amongUs.VentLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,6 +29,10 @@ public class GamePlayer {
     private DisguiseData disguises;
 
     private GameAmongUsTask[] playerTasks;
+    private int doneTasks;
+    private boolean isVenting;
+    private Location VentCameraPos;
+    private ArrayList<VentLocation> Posses;
 
     private boolean parkour = false;
     private int parkourTime;

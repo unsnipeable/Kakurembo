@@ -5,6 +5,10 @@ import matanku.kakurembo.Config;
 import matanku.kakurembo.Items;
 import matanku.kakurembo.api.util.ItemBuilder;
 import matanku.kakurembo.enums.*;
+import matanku.kakurembo.game.amongUs.GameAmongUsTask;
+import matanku.kakurembo.game.amongUs.VentLocation;
+import matanku.kakurembo.game.amongUs.tasks.CafeteriaOchibaTask;
+import matanku.kakurembo.game.amongUs.tasks.OtwoOchibaTask;
 import matanku.kakurembo.game.task.impl.HiderPhaseTask;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
 import matanku.kakurembo.player.GamePlayer;
@@ -40,12 +44,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.event.GamePlayerDeathEvent;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class GameListener implements Listener {
 
@@ -392,11 +396,78 @@ public class GameListener implements Listener {
         if (game.isStarted()) {
             if (game.getSettings().isAmongUs()) {
                 Block playerBlock = player.getLocation().getBlock();
+                Block playerBlock2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
                 boolean isVent = player.getLocation().getBlock().getLocation().clone().add(0,-1,0).getBlock().getType() == Material.BASALT;
 
                 if (playerBlock.getType() == Material.IRON_TRAPDOOR) {
                     if (isVent) {
-                        // vent
+                        if (!gamePlayer.isVenting()) {
+                            gamePlayer.setVenting(true);
+                            Map<Material, ArrayList<VentLocation>> vents = new HashMap<>() {{
+                                put(Material.LIGHT_BLUE_WOOL, new ArrayList<>() {{
+                                    add(new VentLocation(new Location(player.getWorld(), 36.7, 6.2, 4.7, 135.0f, 50.0f),new Location(player.getWorld(),35.5,5.0,3.5,135.0f,0f)));
+                                    add(new VentLocation(new Location(player.getWorld(), 12.5, 8.2, -6.7, 15.2f, 16.5f),new Location(player.getWorld(),12.5,5,-5.5,0f,0f)));
+                                    add(new VentLocation(new Location(player.getWorld(), 26.3, 5.2, -16.3, -135.0f, 25.5f),new Location(player.getWorld(),27.5,5,-17.5,-135,0)));
+                                }});
+                                put(Material.LIGHT_GRAY_WOOL, new ArrayList<>() {{
+                                    add(new VentLocation(new Location(player.getWorld(), 4.3, 6.2, -14.5, -90.0f, 42.0f),new Location(player.getWorld(),4.5,5,-14.5,-90,0)));
+                                    add(new VentLocation(new Location(player.getWorld(), 19.3, 6.2, -28.3, -135.0f, 35.0f),new Location(player.getWorld(),19.5,5,-28.5,-130,0)));
+                                }});
+                                put(Material.PINK_WOOL, new ArrayList<>() {{
+                                    add(new VentLocation(new Location(player.getWorld(), 35.3,6.2,28.7,-135.0f,30.0f),new Location(player.getWorld(),35.5, 5, 28.5, -135,0)));
+                                    add(new VentLocation(new Location(player.getWorld(), 22.5,6.2,38.5,156.0f,32.5f),new Location(player.getWorld(),22.5,5,38.5, 180,0)));
+                                    add(new VentLocation(new Location(player.getWorld(), 28.7,6.2,46.3,50.0f,17.0f),new Location(player.getWorld(),28.5,5,46.5,50,0)));
+                                }});
+                                put(Material.GREEN_WOOL, new ArrayList<>() {{
+                                    add(new VentLocation(new Location(player.getWorld(), 46.7,7.2,53.3,45.0f,30.0f),new Location(player.getWorld(),46.5,5,53.5,50,0)));
+                                    add(new VentLocation(new Location(player.getWorld(), 32.7,7.2,71.0,100.0f,45.0f),new Location(player.getWorld(),28.5,5,69.5,90,0)));
+                                }});
+                                put(Material.MAGENTA_WOOL, new ArrayList<>() {{
+                                    add(new VentLocation(new Location(player.getWorld(), 1.3,7.2,53.3,-50f,27.0f),new Location(player.getWorld(),1.5,5,53.5,-65,0)));
+                                    add(new VentLocation(new Location(player.getWorld(), 14.3,7.2,71.5,-100.0f,40.0f),new Location(player.getWorld(),19.5,5,71.5,-150,0)));
+                                }});
+                            }};
+                            for (Map.Entry<Material, ArrayList<VentLocation>> entry : vents.entrySet()) {
+                                if (playerBlock2Above.getType() == entry.getKey()) {
+                                    VentLocation loc = Util.random(entry.getValue());
+                                    player.teleport(loc.cameraPos());
+                                    gamePlayer.setVentCameraPos(loc.cameraPos());
+                                    gamePlayer.setPosses(entry.getValue());
+                                }
+                            }
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    if (!gamePlayer.isVenting()) {
+                                        cancel();
+                                    }
+                                    player.teleport(gamePlayer.getVentCameraPos());
+                                    if (player.isSneaking()) {
+                                        gamePlayer.setVenting(false);
+                                        cancel();
+                                    }
+                                    if (player.isJumping()) {
+                                        VentLocation loc = Util.random(gamePlayer.getPosses());
+                                        player.teleport(loc.cameraPos());
+                                        gamePlayer.setVentCameraPos(loc.cameraPos());
+                                    }
+                                }
+                            }.runTaskTimer(HideAndSeek.getINSTANCE(),0L,1L);
+                        }
+                    } else {
+                        Map<Material, GameAmongUsTask> tasks = new HashMap<>() {{
+                            put(Material.RED_WOOL, new CafeteriaOchibaTask());
+                            put(Material.BLACK_CONCRETE, new OtwoOchibaTask());
+                        }};
+                        for (Map.Entry<Material, GameAmongUsTask> entry : tasks.entrySet()) {
+                            if (playerBlock2Above.getType() == entry.getKey()) {
+                                if (Arrays.asList(gamePlayer.getPlayerTasks()).contains(entry.getValue())) {
+                                    entry.getValue().openMenu(player);
+                                } else {
+                                    Common.sendMessage(player, "<red>あなたはこのタスクの担当ではありません!");
+                                }
+                            }
+                        }
                     }
                 }
             }
