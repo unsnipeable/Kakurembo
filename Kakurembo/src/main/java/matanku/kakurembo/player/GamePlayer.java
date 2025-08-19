@@ -20,6 +20,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GamePlayer {
 
+    private boolean muted;
+
+    public String previousChat;
+
     private final UUID uniqueID;
     private GameRole role = GameRole.NONE;
     private int stanCooldown = 0;
@@ -27,6 +31,8 @@ public class GamePlayer {
     private boolean enableBuild;
     @Setter
     private DisguiseData disguises;
+
+    private int trollPoint = 0;
 
     private GameAmongUsTask[] playerTasks;
     private int doneTasks;
@@ -50,6 +56,7 @@ public class GamePlayer {
             setParkourTime2(0);
         }
     }
+
 
 
     public void setParkour(boolean bool) {

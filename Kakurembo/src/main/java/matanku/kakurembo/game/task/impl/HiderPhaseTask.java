@@ -1,11 +1,9 @@
 package matanku.kakurembo.game.task.impl;
 
-import matanku.kakurembo.game.GameSettings;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Sound;
-import matanku.kakurembo.Config;
 import matanku.kakurembo.util.Util;
 
 public class HiderPhaseTask extends GameTask {

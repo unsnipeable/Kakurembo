@@ -1,18 +1,16 @@
 package matanku.kakurembo.game;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
-import matanku.kakurembo.Config;
+import matanku.kakurembo.config.Config;
 import matanku.kakurembo.Items;
 import matanku.kakurembo.api.util.ItemBuilder;
+import matanku.kakurembo.config.datamanager.DataManager;
+import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.enums.*;
-import matanku.kakurembo.game.amongUs.GameAmongUsTask;
 import matanku.kakurembo.game.amongUs.VentLocation;
-import matanku.kakurembo.game.amongUs.tasks.CafeteriaOchibaTask;
-import matanku.kakurembo.game.amongUs.tasks.OtwoOchibaTask;
-import matanku.kakurembo.game.task.impl.HiderPhaseTask;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
 import matanku.kakurembo.player.GamePlayer;
-import matanku.kakurembo.util.ParkourUtil;
+import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.menu.Button;
@@ -48,6 +46,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.event.GamePlayerDeathEvent;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.util.*;
 
@@ -85,7 +85,7 @@ public class GameListener implements Listener {
             }
             Common.broadcastMessage("<yellow>" + player.getName() + "<aqua>は途中参加してきたので、" + GameRole.SEEKER.getColoredName() + "としてゲームに参加しました！");
         }
-        event.joinMessage(Common.text("<gray>[<green>+<gray>] <yellow>" + player.getName()));
+        event.joinMessage(Common.text("<gray>" + player.getName() +" <yellow>has joined (" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers() + ")"));
     }
 
     @EventHandler
@@ -106,7 +106,7 @@ public class GameListener implements Listener {
             }
         }
 
-        event.quitMessage(Common.text("<gray>[<red>-<gray>] <yellow>" + player.getName()));
+        event.quitMessage(Common.text("<gray>"+ player.getName() + " <yellow>has quit!"));
 
         if (game.isStarted() && game.canEnd()) {
             game.end();
@@ -194,6 +194,10 @@ public class GameListener implements Listener {
             GamePlayer gameEntity = game.getGamePlayer(entity);
             GamePlayer gameDamager = game.getGamePlayer(damager);
 
+            if (gameDamager.getRole() == GameRole.HIDER && gameEntity.getRole() == GameRole.SEEKER) {
+                gameDamager.setTrollPoint(gameDamager.getTrollPoint()+1);
+            }
+
             if (gameEntity.getRole() == gameDamager.getRole()) {
                 event.setCancelled(true);
                 return;
@@ -233,13 +237,14 @@ public class GameListener implements Listener {
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
         if (game.getSettings().isAmongUs()) {
+            if (player.getAllowFlight()) return;
             player.setHealth(20.0D);
             player.setAllowFlight(true);
+            gamePlayer.getDisguises().getDisguise().stopDisguise();
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE,255,true,false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 3,255,true,false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 3,255,true,false));
             player.playSound(player.getLocation(),Sound.BLOCK_ANVIL_FALL,1,1);
-            gamePlayer.getDisguises().getDisguise().stopDisguise();
             Common.sendMessage(player, "<red><bold>DIED! <!bold>あなたは" + GameRole.SEEKER.getAmongUsName() + "に殺害されました");
             player.getInventory().clear();
         } else {
@@ -248,6 +253,7 @@ public class GameListener implements Listener {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
+            player.getInventory().clear();
             player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, game.getSettings().isSwordFire()).build(true));
 
             for (PotionEffect pe : player.getActivePotionEffects()) {
@@ -395,11 +401,16 @@ public class GameListener implements Listener {
 
         if (game.isStarted()) {
             if (game.getSettings().isAmongUs()) {
-                Block playerBlock = player.getLocation().getBlock();
+                if (gamePlayer.isVenting()) {
+                    VentLocation loc = Util.random(gamePlayer.getPosses());
+                    player.teleport(loc.cameraPos());
+                    gamePlayer.setVentCameraPos(loc.cameraPos());
+                }
                 Block playerBlock2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
                 boolean isVent = player.getLocation().getBlock().getLocation().clone().add(0,-1,0).getBlock().getType() == Material.BASALT;
 
-                if (playerBlock.getType() == Material.IRON_TRAPDOOR) {
+
+                if (block != null && block.getType() == Material.IRON_TRAPDOOR) {
                     if (isVent) {
                         if (!gamePlayer.isVenting()) {
                             gamePlayer.setVenting(true);
@@ -446,27 +457,8 @@ public class GameListener implements Listener {
                                         gamePlayer.setVenting(false);
                                         cancel();
                                     }
-                                    if (player.isJumping()) {
-                                        VentLocation loc = Util.random(gamePlayer.getPosses());
-                                        player.teleport(loc.cameraPos());
-                                        gamePlayer.setVentCameraPos(loc.cameraPos());
-                                    }
                                 }
                             }.runTaskTimer(HideAndSeek.getINSTANCE(),0L,1L);
-                        }
-                    } else {
-                        Map<Material, GameAmongUsTask> tasks = new HashMap<>() {{
-                            put(Material.RED_WOOL, new CafeteriaOchibaTask());
-                            put(Material.BLACK_CONCRETE, new OtwoOchibaTask());
-                        }};
-                        for (Map.Entry<Material, GameAmongUsTask> entry : tasks.entrySet()) {
-                            if (playerBlock2Above.getType() == entry.getKey()) {
-                                if (Arrays.asList(gamePlayer.getPlayerTasks()).contains(entry.getValue())) {
-                                    entry.getValue().openMenu(player);
-                                } else {
-                                    Common.sendMessage(player, "<red>あなたはこのタスクの担当ではありません!");
-                                }
-                            }
                         }
                     }
                 }
@@ -503,7 +495,7 @@ public class GameListener implements Listener {
 
                         player.teleport(new Location(blockLoc.getWorld(), blockLoc.getX() + 0.5, blockLoc.getY(), blockLoc.getZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
 
-                        String[] disallowedBlocks = new String[]{"SIGN", "CARPET"};
+                        String[] disallowedBlocks = new String[]{"SIGN", "CARPET", "SLAB"};
                         String[] disallowedBlocks2 = new String[]{"STAINED_GLASS_PANE"};
 
                         for (String string : disallowedBlocks) {
@@ -556,7 +548,8 @@ public class GameListener implements Listener {
         if (!(player.getWorld().getBlockAt(new Location(player.getWorld(),8,-60,5)).getType() == Material.SEA_LANTERN)) {
             return;
         }
-        if (gamePlayer != null) {
+
+        if (gamePlayer != null && !HideAndSeek.getINSTANCE().getGame().isStarted()) {
 
             if (player.getLocation().getY() <= -70) {
                 if (gamePlayer.isParkour()) {
@@ -596,8 +589,13 @@ public class GameListener implements Listener {
                     if (gamePlayer.getParkourStatus() != CheckPointStatus.LIGHT_BLUE) {
                         return;
                     }
-                    Common.sendMessage(player, "<green><bold>PARKOUR! <!bold>パルクールを終了しました!\n<white>あなたのタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()));
-                    ParkourUtil.addPlayerInfo(player.getName(), gamePlayer.getParkourTime());
+                    Common.sendMessage(player, "<gold><bold>PARKOUR! <!bold>パルクールを終了しました!\n<white>あなたのタイム:<blue> "  + Util.getSecFromTick(gamePlayer.getParkourTime()));
+
+                    for (DataManager dm : Manager.getManagers()) {
+                        if (dm instanceof ParkourDataManager) {
+                            dm.addPlayerInfo(player.getName(), gamePlayer.getParkourTime());
+                        }
+                    }
                     gamePlayer.setParkour(false);
                     gamePlayer.setParkourStatus(CheckPointStatus.NOTPLAYING);
 
@@ -701,10 +699,97 @@ public class GameListener implements Listener {
     public void onChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         String message = LegacyComponentSerializer.legacySection().serialize(event.message());
+        event.setCancelled(true);
+
+        GamePlayer gamePlayer = HideAndSeek.getINSTANCE().getGame().getGamePlayer(player);
+
+        if (gamePlayer.previousChat.equalsIgnoreCase(message)) {
+            Common.sendMessage(player,Common.text("<red>チャットをスパムしないでください！"));
+            return;
+        }
+        gamePlayer.previousChat = message;
+
+        if (HideAndSeek.getINSTANCE().getGame().getGamePlayer(player).isMuted()) {
+            Common.sendMessage(player,Common.text("<gold><strikethrough>                                     <bold>"),Common.text("<red>          <bold>MUTE"),Common.text(""),Common.text("<gold>あなたは現在muteされています!"),Common.text("<gray>matanku network"),Common.text("<gold><strikethrough>                                     <bold>"));
+            return;
+        }
+
+        if (checkMessage(player, message)) {
+            return;
+        }
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             Common.sendMessage(p,Common.text("<gold>" + player.getName() + "<white>: " + message));
         }
-        event.setCancelled(true);
+
+    }
+
+    private static final List<String> BLOCKED = List.of(
+            "nigga", "nigger", "fuck", "shit", "quit", "l",
+            "sine", "kiero", "kasu", "gomi", "busu", "bitch","loser"
+    );
+
+    private static final Map<String, String> NORMALIZE = Map.of(
+            "1", "i",
+            "!", "i",
+            "4", "a",
+            "@", "a",
+            "3", "e",
+            "0", "o",
+            "g", "q" // your example
+    );
+
+    public boolean checkMessage(Player player, String message) {
+        String normalized = normalize(message.toLowerCase());
+        boolean isBlocked = false;
+        String highlightMessage = message;
+
+        for (String bad : BLOCKED) {
+            Pattern p;
+            if (bad.equalsIgnoreCase("nigga")) {
+                // N*gga 系は特殊対応
+                p = Pattern.compile("n.gga", Pattern.CASE_INSENSITIVE);
+            } else if (bad.equalsIgnoreCase("nigger")) {
+                // N*gger 系は特殊対応
+                p = Pattern.compile("n.gg.r", Pattern.CASE_INSENSITIVE);
+            } else if (bad.length() >= 4) {
+                // 4文字以上 → 部分一致
+                p = Pattern.compile(Pattern.quote(bad), Pattern.CASE_INSENSITIVE);
+            } else {
+                // 3文字以下 → 単語完全一致
+                p = Pattern.compile("\\b" + Pattern.quote(bad) + "\\b", Pattern.CASE_INSENSITIVE);
+            }
+
+            Matcher m = p.matcher(normalized);
+            if (m.find()) {
+                isBlocked = true;
+                // Matcherで置換して、揺れ文字も正しく色付け
+                Matcher m2 = p.matcher(highlightMessage);
+                highlightMessage = m2.replaceAll("§4$0§c");
+            }
+        }
+
+        if (isBlocked) {
+            player.sendMessage(Component.text("§6§m                                     §l"));
+            player.sendMessage(Component.text("§c§l          WARNING!"));
+            player.sendMessage(Component.text(""));
+            player.sendMessage(Component.text("§6あなたが送ったメッセージ"));
+            player.sendMessage(Component.text("§c" + highlightMessage));
+            player.sendMessage(Component.text("§6は悪意のあるメッセージと判断されたため、ブロックされました。"));
+            player.sendMessage(Component.text("§7matanku network"));
+            player.sendMessage(Component.text("§6§m                                     §l"));
+            return true;
+        }
+
+        return false;
+    }
+
+    private String normalize(String input) {
+        String out = input;
+        for (Map.Entry<String, String> e : NORMALIZE.entrySet()) {
+            out = out.replace(e.getKey(), e.getValue());
+        }
+        return out;
     }
 
 }

@@ -10,6 +10,7 @@ import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -93,7 +94,7 @@ public class SeekerPhaseTask extends GameTask {
                         }
                         Map.Entry<GamePlayer, Double> minEntry = trackerMap.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
                         if (!(minEntry == null)) {
-                            entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int) Math.ceil(minEntry.getValue()) + "m <reset><white>Health: <red><bold>" + (int) (Math.ceil(minEntry.getKey().getPlayer().getHealth() * 10) / 10) + Symbols.HEALTH));
+                            entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int) Math.ceil(minEntry.getValue()) + "m <reset><white>Direction: <light_purple><bold> "+ getDirection(entry.getValue().getPlayer(),minEntry.getKey().getPlayer()) +"<reset><white>Health: <red><bold>" + (int) (Math.ceil(minEntry.getKey().getPlayer().getHealth() * 10) / 10) + Symbols.HEALTH));
                         }
                     }
 
@@ -150,4 +151,29 @@ public class SeekerPhaseTask extends GameTask {
     public int getStartTick() {
         return seconds;
     }
+    public String getDirection(Player player1, Player player2) {
+        Location loc1 = player1.getLocation();
+        Location loc2 = player2.getLocation();
+
+        double dx = loc2.getX() - loc1.getX();
+        double dz = loc2.getZ() - loc1.getZ();
+
+        float playerYaw = loc1.getYaw();
+        float relativeYaw = (float) Math.toDegrees(Math.atan2(-dx, dz)) - playerYaw;
+        relativeYaw = (relativeYaw + 360) % 360;
+        String direction = "";
+        if (relativeYaw >= 45 && relativeYaw < 135) {
+            direction += "←";
+        } else if (relativeYaw >= 135 && relativeYaw < 225) {
+            direction += "↓";
+        } else if (relativeYaw >= 225 && relativeYaw < 315) {
+            direction += "→";
+        } else {
+            direction += "↑";
+        }
+
+        return direction;
+    }
+
+
 }

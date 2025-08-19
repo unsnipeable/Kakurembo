@@ -18,12 +18,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.game.Game;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 
 public class GameSettingsMenu extends Menu {
     @Override
@@ -377,22 +378,8 @@ public class GameSettingsMenu extends Menu {
             }
         });
 
-        buttons.put(11, new IntegerButton() {
-            @Override
-            public Material getMaterial() {
-                return Material.PAPER;
-            }
 
-            @Override
-            public String getOptionName() {
-                return "Among USモードのタスク数";
-            }
-
-
-            @Override
-            public String[] getDescription() {
-                return new String[]{"クルーメイトが行う必要のあるタスクの数です。"};
-            }
+        buttons.put(11, new IntegerButton(){
 
             @Override
             public String getCurrentValue() {
@@ -417,6 +404,68 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void minus10(Player player) {
                 game.getSettings().setAmongUsTasks(Math.max(0, game.getSettings().getAmongUsTasks() - 10));
+            }
+
+            @Override
+            public Material getMaterial() {
+                return Material.IRON_PICKAXE;
+            }
+
+            @Override
+            public String getOptionName() {
+                return "タスク数";
+            }
+
+            @Override
+            public String[] getDescription() {
+                return new String[]{"クルーが行う必要のあるタスクの数"};
+            }
+
+            @Override
+            public void clicked(Player player, ClickType clickType) {
+                super.clicked(player, clickType);
+                openMenu(player);
+            }
+        });
+
+        buttons.put(12, new IntegerButton(){
+            @Override
+            public String getCurrentValue() {
+                return game.getSettings().getSpeed() == -1 ? "<red>未設定" : game.getSettings().getSpeed() + "";
+            }
+
+            @Override
+            public void plus1(Player player) {
+                game.getSettings().setSpeed(Math.max(0, game.getSettings().getSpeed() + 1));
+            }
+
+            @Override
+            public void plus10(Player player) {
+                game.getSettings().setSpeed(Math.max(0, game.getSettings().getSpeed() + 10));
+            }
+
+            @Override
+            public void minus1(Player player) {
+                game.getSettings().setSpeed(Math.max(0, game.getSettings().getSpeed() - 1));
+            }
+
+            @Override
+            public void minus10(Player player) {
+                game.getSettings().setSpeed(Math.max(0, game.getSettings().getSpeed() - 10));
+            }
+            @Override
+            public Material getMaterial() {
+                return Material.SUGAR;
+            }
+
+            @Override
+            public String getOptionName() {
+                return "スピード";
+            }
+
+            @Override
+            public String[] getDescription() {
+                return new String[]{"速さのエフェクト"};
             }
 
             @Override

@@ -2,7 +2,7 @@ package matanku.kakurembo.game;
 
 import lombok.Getter;
 import lombok.Setter;
-import matanku.kakurembo.Config;
+import matanku.kakurembo.config.Config;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.api.util.ItemBuilder;
 import matanku.kakurembo.enums.DisguiseTypes;
@@ -176,6 +176,7 @@ public class Game {
         for (Map.Entry<UUID, GamePlayer> entry : getPlayers().entrySet()) {
             if (entry.getValue().getDisguises() == null) continue;
             entry.getValue().getDisguises().getDisguise().stopDisguise();
+            entry.getValue().setTrollPoint(0);
         }
     }
 

@@ -25,7 +25,6 @@ public final class KakuremboAPI extends JavaPlugin {
     public KakuremboAPI enable(JavaPlugin plugin) {
         PLUGIN = plugin;
 
-
         return this;
     }
 

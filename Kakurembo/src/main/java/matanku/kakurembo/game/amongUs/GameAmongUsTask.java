@@ -9,6 +9,9 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 public class GameAmongUsTask extends Menu {
+    public GameAmongUsTask() {
+        isAmongUsTaskMenu = true;
+    }
     public void clear(Player player) {
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
         Game game = HideAndSeek.getINSTANCE().getGame();
@@ -27,4 +30,5 @@ public class GameAmongUsTask extends Menu {
     public Component getTitle(Player player) {
         return Common.text("タスク");
     }
+
 }

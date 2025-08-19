@@ -55,3 +55,9 @@ processResources {
         expand props
     }
 }
+
+task buildAndCopyToMods(type: Copy, dependsOn: 'build') {
+    from "build/libs"
+    into "../jar"
+    include "*.jar"
+}

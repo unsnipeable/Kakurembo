@@ -62,3 +62,11 @@ processResources {
         expand props
     }
 }
+
+tasks.register('buildAndCopyToMods', Copy) {
+    dependsOn 'build'
+    from "build/libs"
+    into "../jar"
+    include "*.jar"
+}
+buildAndCopyToMods.finalizedBy build

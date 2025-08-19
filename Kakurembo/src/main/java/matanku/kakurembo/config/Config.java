@@ -1,4 +1,4 @@
-package matanku.kakurembo;
+package matanku.kakurembo.config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

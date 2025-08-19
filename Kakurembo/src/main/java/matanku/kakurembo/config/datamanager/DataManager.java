@@ -1,7 +1,9 @@
-package matanku.kakurembo.util;
+package matanku.kakurembo.config.datamanager;
 
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import matanku.kakurembo.HideAndSeek;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -17,36 +20,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParkourUtil {
+@RequiredArgsConstructor
+public abstract class DataManager implements IDataManager {
 
-    private static File dataFile;
-    private static FileConfiguration dataConfig;
-    private static Hologram hologram;
+    private Hologram hologram;
+    private File dataFile;
+    @Getter
+    private FileConfiguration dataConfig;
 
-    public static void onEnable() {
-        ParkourUtil.loadDataFile();
+
+    public void onEnable() {
+        loadDataFile();
         if (Bukkit.getWorld("world") == null) return;
-        Location loc = Bukkit.getWorld("world").getBlockAt(15,-56 ,11).getLocation();
-        ParkourUtil.createEmptyHologram(loc);
+        createEmptyHologram(loc());
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                ParkourUtil.updateHologramLines();
+                updateHologramLines();
             }
         }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 20L); // 毎秒更新
     }
 
-    public static void loadDataFile() {
-        dataFile = new File(HideAndSeek.getINSTANCE().getDataFolder(), "data.yml");
+    public void loadDataFile() {
+        dataFile = new File(HideAndSeek.getINSTANCE().getDataFolder(), configName() + ".yml");
         if (!dataFile.exists()) {
             dataFile.getParentFile().mkdirs();
-            HideAndSeek.getINSTANCE().saveResource("data.yml", false);
+            try (FileWriter writer = new FileWriter(dataFile)) {
+                writer.write("players: {}");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
     }
 
-    private static void saveDataFile() {
+    private void saveDataFile() {
         try {
             dataConfig.save(dataFile);
         } catch (IOException e) {
@@ -54,15 +63,20 @@ public class ParkourUtil {
         }
     }
 
-    public static void addPlayerInfo(String playerName, int ticks) {
+    public void addPlayerInfo(String playerName, int Integers) {
         int oldTicks = dataConfig.getInt("players." + playerName, Integer.MAX_VALUE);
-        if (ticks < oldTicks) {
-            dataConfig.set("players." + playerName, ticks);
+        if (Integers < oldTicks) {
+            dataConfig.set("players." + playerName, Integers);
             saveDataFile();
         }
     }
 
-    private static Map<String, Integer> getParkourTimes() {
+    public void addPlayerInfo2(String playerName, int Integers) {
+        dataConfig.set("players." + playerName, Integers + dataConfig.getInt("players." + playerName, Integer.MAX_VALUE));
+        saveDataFile();
+    }
+
+    private Map<String, Integer> getData() {
         Map<String, Integer> result = new HashMap<>();
         if (dataConfig.contains("players")) {
             for (String name : dataConfig.getConfigurationSection("players").getKeys(false)) {
@@ -72,30 +86,29 @@ public class ParkourUtil {
         return result;
     }
 
-    public static void createEmptyHologram(Location location) {
+
+    public void createEmptyHologram(Location location) {
         List<String> lines = new ArrayList<>();
-        lines.add("&e&lLeaderboard");
+        lines.add("&e&l" + name() + " Leaderboard");
         for (int i = 1; i <= 10; i++) lines.add("&e" + i + ". &8Loading...");
-        hologram = DHAPI.createHologram("parkour_leaderboard", location, lines);
+        hologram = DHAPI.createHologram(configName() + "_LB", location, lines);
     }
 
-    public static void updateHologramLines() {
-        Map<String, Integer> times = getParkourTimes();
+    public void updateHologramLines() {
+        Map<String, Integer> times = getData();
         List<Map.Entry<String, Integer>> sorted = new ArrayList<>(times.entrySet());
         sorted.sort(Map.Entry.comparingByValue());
 
-        DecimalFormat df = new DecimalFormat("#0.00");
 
         for (int i = 0; i < 10; i++) {
             String line;
             if (i < sorted.size()) {
                 Map.Entry<String, Integer> entry = sorted.get(i);
-                double seconds = entry.getValue() / 20.0;
-                line = "&e" + (i + 1) + ". &6" + entry.getKey() + " &7- &e" + df.format(seconds) + "s";
+                line = "&e" + (i + 1) + ". &6" + entry.getKey() + " &7- &e" + calc(entry.getValue()) + "s";
             } else {
                 line = "&7" + (i + 1) + ". &8---";
             }
-            DHAPI.setHologramLine(hologram, i + 1, line); // 0はタイトル
+            DHAPI.setHologramLine(hologram, i + 1, line);
         }
     }
 }

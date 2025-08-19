@@ -1,5 +1,9 @@
 package matanku.kakurembo.game.task.impl;
 
+import matanku.kakurembo.config.datamanager.DataManager;
+import matanku.kakurembo.config.datamanager.Manager;
+import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
+import matanku.kakurembo.config.datamanager.impl.TrollDataManager;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
@@ -11,6 +15,8 @@ import org.bukkit.World;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EndTask extends GameTask {
@@ -51,7 +57,15 @@ public class EndTask extends GameTask {
                     "",
                     "<yellow>ゲームオーバー!",
                     winner.getColoredName() + "<green>が勝利しました!",
-                    winner.getColoredName() + "<yellow>そのチームのメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>")),
+                    winner.getColoredName() + "<yellow>のメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>"))
+            );
+            List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPoint).reversed()).limit(3).toList();
+            Common.broadcastMessage(
+                    "",
+                    "<gold>««　<yellow>トロールポイントランキング　<gold>»»",
+                    "<white>|  <gold>1位: <gold>" + top3.get(0).getPlayer().getName() + " (" + top3.get(0).getTrollPoint() + ")",
+                    (top3.size() > 1 ? "<white>|  <gray>2位: <gold>" + top3.get(1).getPlayer().getName() + " (" + top3.get(1).getTrollPoint() + ")" : "<white>|  <light_gray>2位: なし"),
+                    (top3.size() > 2 ? "<white>|  <dark_red>3位: <gold>" + top3.get(2).getPlayer().getName() + " (" + top3.get(2).getTrollPoint() + ")" : "<white>|  <dark_red>3位: なし"),
                     ""
             );
         }
@@ -68,6 +82,13 @@ public class EndTask extends GameTask {
         for (GamePlayer gamePlayer : game.getPlayers().values()) {
             gamePlayer.setDisguises(null);
             gamePlayer.setFlagged(0);
+
+            for (DataManager dm : Manager.getManagers()) {
+                if (dm instanceof ParkourDataManager) {
+                    dm.addPlayerInfo2(gamePlayer.getPlayer().getName(), gamePlayer.getTrollPoint());
+                }
+            }
+            gamePlayer.setTrollPoint(0);
         }
 
 

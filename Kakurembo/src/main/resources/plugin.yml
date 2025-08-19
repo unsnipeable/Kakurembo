@@ -16,6 +16,7 @@ commands:
   disguiseselect:
   roleselect:
   end:
+  mute:
   setlobby:
     permission-message: §cYou don't have permissions to run that command!
     permission: op
