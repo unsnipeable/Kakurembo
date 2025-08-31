@@ -4,6 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.api.util.Symbols;
+import matanku.kakurembo.config.datamanager.DataManager;
+import matanku.kakurembo.config.datamanager.Manager;
+import matanku.kakurembo.config.datamanager.impl.CoinDataManager;
+import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
+import matanku.kakurembo.enums.DataManagerType;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
@@ -38,91 +43,91 @@ public class SeekerPhaseTask extends GameTask {
             cancel();
             game.end();
         }
-        if (game.getSettings().isAmongUs()) {
-            if (game.getGamePlayersBossBar() != null) {
-                game.getGamePlayersBossBar().destroy();
-                game.setGamePlayersBossBar(null);
-            }
-            if (game.getBossBar() != null) {
-                game.getBossBar().destroy();
-                game.setBossBar(null);
-            }
 
-            if (game.getCompTask() == game.getFullTask()) {
-                game.end();
+        if (tick % 60 == 0) {
+            for (GamePlayer gamePlayer : game.getPlayers().values()) {
+                Objects.requireNonNull(Manager.getDataManager("CoinDataManager")).addPlayerInfoInteger(gamePlayer.getPlayer().getUniqueId().toString(), 10, DataManagerType.ADD);
+                Common.sendMessage(gamePlayer.getPlayer(), "<gold>+10コイン! (プレイ時間)");
             }
-        } else {
-            if (tick == game.getSettings().getTimes().getOrDefault("glowing_time", 180)) {
-                for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
-                    if (entry.getValue().getRole() == GameRole.HIDER) {
-                        entry.getValue().getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 255, true, false));
-                        Common.broadcastMessage("<gray>[<red>!<gray>] 残り1分になったためすべてのハイダーが発光しました!");
-                    }
-                }
-            }
-            if (tick == game.getSettings().getTimes().getOrDefault("tracker_time", 180)) {
-                if (game.getSettings().isTrackerEnabled()) {
-                    Common.broadcastMessage("<gray>[<red>!<gray>] 残り3分になったためシーカーに一番近くのハイダーとの距離が知らされました!");
-                    tracker = true;
-                }
-            }
-            if (Util.ANNOUNCE.contains(tick)) {
-                Common.broadcastSound(Sound.UI_BUTTON_CLICK);
-            }
+        }
 
-            game.getBossBar().name("<yellow>ハイダーは<aqua>" + Util.getTime(tick) + "<yellow>後に勝利します!").color(BossBar.Color.YELLOW).progress((float) tick / seconds);
-            game.getBossBar().show();
-
-            String players = game.getPlayers().values().stream().map(gp -> (gp.getRole() == GameRole.SEEKER ? "<red>" : "<blue>") + "<bold>" + gp.getPlayer().getName() + "<reset><gray>").collect(Collectors.joining(", "));
-            game.getGamePlayersBossBar().name(players);
-            game.getGamePlayersBossBar().show();
-
-
+        if (tick == game.getSettings().getTimes().getOrDefault("glowing_time", 180)) {
             for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
-                if (entry.getValue().getStanCooldown() > 0) {
-                    entry.getValue().setStanCooldown(entry.getValue().getStanCooldown() - 1);
+                if (entry.getValue().getRole() == GameRole.HIDER) {
+                    entry.getValue().getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 255, true, false));
+                    Common.broadcastMessage("<gray>[<red>!<gray>] 残り1分になったためすべてのハイダーが発光しました!");
                 }
-                setProgressXP(entry.getValue().getPlayer(), entry.getValue().getStanCooldown());
+            }
+        }
+        if (tick == game.getSettings().getTimes().getOrDefault("tracker_time", 180)) {
+            if (game.getSettings().isTrackerEnabled()) {
+                Common.broadcastMessage("<gray>[<red>!<gray>] 残り3分になったためシーカーに一番近くのハイダーとの距離が知らされました!");
+                tracker = true;
+            }
+        }
+        if (Util.ANNOUNCE.contains(tick)) {
+            Common.broadcastSound(Sound.UI_BUTTON_CLICK);
+        }
 
-                if (entry.getValue().getRole() == GameRole.SEEKER) {
-                    if (tracker) {
-                        Map<GamePlayer, Double> trackerMap = new HashMap<>();
-                        for (GamePlayer hider : game.getPlayers().values()) {
-                            if (hider.getRole() == GameRole.HIDER) {
-                                trackerMap.put(hider, hider.getPlayer().getLocation().distance(entry.getValue().getPlayer().getLocation()));
-                            }
-                        }
-                        Map.Entry<GamePlayer, Double> minEntry = trackerMap.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
-                        if (!(minEntry == null)) {
-                            entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int) Math.ceil(minEntry.getValue()) + "m <reset><white>Direction: <light_purple><bold> "+ getDirection(entry.getValue().getPlayer(),minEntry.getKey().getPlayer()) +"<reset><white>Health: <red><bold>" + (int) (Math.ceil(minEntry.getKey().getPlayer().getHealth() * 10) / 10) + Symbols.HEALTH));
+        game.getBossBar().name("<yellow>ハイダーは<aqua>" + Util.getTime(tick) + "<yellow>後に勝利します!").color(BossBar.Color.YELLOW).progress((float) tick / seconds);
+        game.getBossBar().show();
+
+        String players = game.getPlayers().values().stream().map(gp -> (gp.getRole() == GameRole.SEEKER ? "<red>" : "<blue>") + "<bold>" + gp.getPlayer().getName() + "<reset><gray>").collect(Collectors.joining(", "));
+        game.getGamePlayersBossBar().name(players);
+        game.getGamePlayersBossBar().show();
+
+
+        for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
+            if (entry.getValue().getGlowingHintCooldown() > 0) {
+                entry.getValue().setGlowingHintCooldown(entry.getValue().getGlowingHintCooldown()-1);
+            } else if (entry.getValue().getGlowingHintCooldown() == 0) {
+                Common.sendMessage(entry.getValue().getPlayer(), "<green>あなたの発光ヒントのクールダウンが終了しました!");
+                entry.getValue().setGlowingHintCooldown(-1);
+            }
+
+            if (entry.getValue().getStanCooldown() > 0) {
+                entry.getValue().setStanCooldown(entry.getValue().getStanCooldown() - 1);
+            }
+            setProgressXP(entry.getValue().getPlayer(), entry.getValue().getStanCooldown());
+
+            if (entry.getValue().getRole() == GameRole.SEEKER) {
+                if (tracker) {
+                    Map<GamePlayer, Double> trackerMap = new HashMap<>();
+                    for (GamePlayer hider : game.getPlayers().values()) {
+                        if (hider.getRole() == GameRole.HIDER) {
+                            trackerMap.put(hider, hider.getPlayer().getLocation().distance(entry.getValue().getPlayer().getLocation()));
                         }
                     }
+                    Map.Entry<GamePlayer, Double> minEntry = trackerMap.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
+                    if (!(minEntry == null)) {
+                        entry.getValue().getPlayer().sendActionBar(Common.text("<white>Tracking: <aqua>" + minEntry.getKey().getPlayer().getName() + " <white>- Distance: <green><bold>" + (int) Math.ceil(minEntry.getValue()) + "m <reset><white>Direction: <light_purple><bold> "+ getDirection(entry.getValue().getPlayer(),minEntry.getKey().getPlayer()) +"<reset><white>Health: <red><bold>" + (int) (Math.ceil(minEntry.getKey().getPlayer().getHealth() * 10) / 10) + Symbols.HEALTH));
+                    }
+                }
 
-                    if (game.getSettings().isHeartBeatEnabled()) {
-                        for (GamePlayer hider : game.getPlayers().values()) {
-                            if (hider.getRole() == GameRole.HIDER) {
-                                double distance = entry.getValue().getPlayer().getLocation().distance(hider.getPlayer().getLocation());
-                                if (distance <= 8) {
-                                    if (!(distance <= 3)) {
-                                        entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 0.8f);
-                                    } else {
-                                        new BukkitRunnable() {
-                                            int count = 0;
+                if (game.getSettings().isHeartBeatEnabled()) {
+                    for (GamePlayer hider : game.getPlayers().values()) {
+                        if (hider.getRole() == GameRole.HIDER) {
+                            double distance = entry.getValue().getPlayer().getLocation().distance(hider.getPlayer().getLocation());
+                            if (distance <= 8) {
+                                if (!(distance <= 3)) {
+                                    entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 0.8f);
+                                } else {
+                                    new BukkitRunnable() {
+                                        int count = 0;
 
-                                            @Override
-                                            public void run() {
-                                                if (removeRunnable) {
-                                                    this.cancel();
-                                                }
-                                                if (count >= 2) {
-                                                    this.cancel();
-                                                    return;
-                                                }
-                                                entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 1.4f);
-                                                count++;
+                                        @Override
+                                        public void run() {
+                                            if (removeRunnable) {
+                                                this.cancel();
                                             }
-                                        }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);
-                                    }
+                                            if (count >= 2) {
+                                                this.cancel();
+                                                return;
+                                            }
+                                            entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 1.4f);
+                                            count++;
+                                        }
+                                    }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);
                                 }
                             }
                         }
@@ -140,11 +145,7 @@ public class SeekerPhaseTask extends GameTask {
 
     @Override
     public TickType getTickType() {
-        if (game.getSettings().isAmongUs()) {
-            return TickType.NONE;
-        } else {
-            return TickType.COUNT_DOWN;
-        }
+        return TickType.COUNT_DOWN;
     }
 
     @Override

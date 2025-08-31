@@ -29,7 +29,7 @@ public class PaginatedMenu {
     }
 
     public void openMenu(Player player) {
-        Inventory gui = Bukkit.createInventory(null, 27, this.getPrePaginatedTitle(player));
+        Inventory gui = Bukkit.createInventory(null, getSize(), this.getPrePaginatedTitle(player));
 
         this.getAllPagesButtons(player).forEach((k, v) -> {gui.setItem(k, v.getButtonItem(player));
             v.guiSlot = k;});
@@ -39,6 +39,10 @@ public class PaginatedMenu {
 
         player.openInventory(gui);
         isOpened = true;
+    }
+
+    public int getSize() {
+        return 27;
     }
 
     public Map<Integer, Button> getGlobalButtons(Player player) {

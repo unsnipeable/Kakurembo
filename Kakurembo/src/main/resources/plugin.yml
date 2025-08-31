@@ -4,34 +4,15 @@ main: matanku.kakurembo.HideAndSeek
 api-version: 1.21
 author: a
 commands:
-  setbuilder:
-    permission: op
-    permission-message: §cYou don't have permissions to run that command!
-  settrackerenabled:
-    permission: op
-    permission-message: §cYou don't have permissions to run that command!
-  countdown:
-    permission: aiueo
-    permission-message: §cYou don't have permissions to run that command!
-  disguiseselect:
-  roleselect:
-  end:
-  mute:
-  setlobby:
-    permission-message: §cYou don't have permissions to run that command!
-    permission: op
-  settings:
-    permission: aiueo
-    permission-message: §cYou don't have permissions to run that command!
-  stopdisguise:
-    permission: op
-    permission-message: §cYou don't have permissions to run that command!
-  stoptask:
-    permission: op
-    permission-message: §cYou don't have permissions to run that command!
+  cosmetics:
+  hideandseek:
+    aliases: [has]
 permissions:
-  aiueo:
+  admin:
+    description: HI
+  gameadmin:
     description: HI
 depend:
   - api
   - DecentHolograms
+  - PlaceholderAPI

@@ -5,6 +5,8 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import matanku.kakurembo.HideAndSeek;
+import matanku.kakurembo.enums.DataManagerType;
+import matanku.kakurembo.enums.DataType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,13 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@RequiredArgsConstructor
+import java.util.*;
 public abstract class DataManager implements IDataManager {
 
     private Hologram hologram;
@@ -28,22 +24,26 @@ public abstract class DataManager implements IDataManager {
     @Getter
     private FileConfiguration dataConfig;
 
+    @Getter
+    public boolean reverse = false;
 
     public void onEnable() {
         loadDataFile();
-        if (Bukkit.getWorld("world") == null) return;
-        createEmptyHologram(loc());
+        if (type() == DataType.INTEGER) {
+            if (Bukkit.getWorld("world") == null) return;
+            createEmptyHologram(loc());
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                updateHologramLines();
-            }
-        }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 20L); // 毎秒更新
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    updateHologramLines();
+                }
+            }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 20L); // 毎秒更新
+        }
     }
 
     public void loadDataFile() {
-        dataFile = new File(HideAndSeek.getINSTANCE().getDataFolder(), configName() + ".yml");
+        dataFile = new File(HideAndSeek.getINSTANCE().getDataFolder() + "/data/", configName() + ".yml");
         if (!dataFile.exists()) {
             dataFile.getParentFile().mkdirs();
             try (FileWriter writer = new FileWriter(dataFile)) {
@@ -53,6 +53,7 @@ public abstract class DataManager implements IDataManager {
             }
         }
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
+
     }
 
     private void saveDataFile() {
@@ -63,29 +64,49 @@ public abstract class DataManager implements IDataManager {
         }
     }
 
-    public void addPlayerInfo(String playerName, int Integers) {
-        int oldTicks = dataConfig.getInt("players." + playerName, Integer.MAX_VALUE);
-        if (Integers < oldTicks) {
-            dataConfig.set("players." + playerName, Integers);
+    // ====== データ登録 ======
+
+    public void addPlayerInfoInteger(String playerName, int value, DataManagerType dmt) {
+        if (type() != DataType.INTEGER) return; // 型チェック
+
+        if (dmt == DataManagerType.SET) {
+            dataConfig.set("players." + playerName, value);
+            saveDataFile();
+        } else if (dmt == DataManagerType.BETTER) {
+            int oldValue = dataConfig.getInt("players." + playerName, Integer.MAX_VALUE);
+            if (value == 0) return;
+            if (value < oldValue) {
+                dataConfig.set("players." + playerName, value);
+                saveDataFile();
+            }
+        } else if (dmt == DataManagerType.ADD) {
+            int oldValue = dataConfig.getInt("players." + playerName, 0);
+            dataConfig.set("players." + playerName, oldValue + value);
             saveDataFile();
         }
     }
 
-    public void addPlayerInfo2(String playerName, int Integers) {
-        dataConfig.set("players." + playerName, Integers + dataConfig.getInt("players." + playerName, Integer.MAX_VALUE));
-        saveDataFile();
+    public void addPlayerInfoString(String playerName, String value, DataManagerType dmt) {
+        if (type() != DataType.STRING) return; // 型チェック
+
+        if (dmt == DataManagerType.SET) {
+            dataConfig.set("players." + playerName, value);
+            saveDataFile();
+        }
     }
 
-    private Map<String, Integer> getData() {
+    private Map<String, Integer> getIntData() {
         Map<String, Integer> result = new HashMap<>();
         if (dataConfig.contains("players")) {
             for (String name : dataConfig.getConfigurationSection("players").getKeys(false)) {
-                result.put(name, dataConfig.getInt("players." + name));
+                Object value = dataConfig.get("players." + name);
+                if (value instanceof Integer) {
+                    result.put(name, (Integer) value);
+                }
             }
         }
         return result;
     }
-
 
     public void createEmptyHologram(Location location) {
         List<String> lines = new ArrayList<>();
@@ -95,20 +116,30 @@ public abstract class DataManager implements IDataManager {
     }
 
     public void updateHologramLines() {
-        Map<String, Integer> times = getData();
-        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(times.entrySet());
-        sorted.sort(Map.Entry.comparingByValue());
 
+        Map<String, Integer> times = getIntData();
+        List<Map.Entry<String, Integer>> sorted = new ArrayList<>(times.entrySet());
+        if (isReverse()) {
+            sorted.sort(Map.Entry.comparingByValue());
+        } else {
+            sorted.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        }
 
         for (int i = 0; i < 10; i++) {
             String line;
             if (i < sorted.size()) {
                 Map.Entry<String, Integer> entry = sorted.get(i);
-                line = "&e" + (i + 1) + ". &6" + entry.getKey() + " &7- &e" + calc(entry.getValue()) + "s";
+                line = "&e" + (i + 1) + ". &6" +
+                        Bukkit.getOfflinePlayer(UUID.fromString(entry.getKey())).getName() +
+                        " &7- &e" + calc(entry.getValue());
             } else {
                 line = "&7" + (i + 1) + ". &8---";
             }
             DHAPI.setHologramLine(hologram, i + 1, line);
         }
     }
+
+    // ====== サブクラスで実装必須 ======
+    public abstract void setVariable(String playerName, Integer i);
+    public abstract void setVariable(String playerName, String s);
 }

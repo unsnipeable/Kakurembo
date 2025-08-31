@@ -9,6 +9,13 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+    maven {
+        name "citizensRepo"
+        url "https://maven.citizensnpcs.co/repo"
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/releases/'
+    }
 }
 
 
@@ -19,7 +26,9 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.32"
     annotationProcessor "org.projectlombok:lombok:1.18.32"
     compileOnly 'com.github.decentsoftware-eu:decentholograms:2.9.6'
+    compileOnly(files("libs/Citizens.jar")) // ここでjarを参照
 
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 }
 
 def targetJavaVersion = 21
@@ -62,11 +71,3 @@ processResources {
         expand props
     }
 }
-
-tasks.register('buildAndCopyToMods', Copy) {
-    dependsOn 'build'
-    from "build/libs"
-    into "../jar"
-    include "*.jar"
-}
-buildAndCopyToMods.finalizedBy build

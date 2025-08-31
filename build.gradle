@@ -14,9 +14,3 @@ allprojects {
         }
     }
 }
-
-task bro(type: Delete, dependsOn: 'build') {
-    dependsOn 'build'
-    delete "build/libs/Kakurembo.jar"
-}
-bro.finalizedBy build

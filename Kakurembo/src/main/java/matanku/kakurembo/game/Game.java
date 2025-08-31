@@ -11,7 +11,6 @@ import matanku.kakurembo.enums.GameState;
 import matanku.kakurembo.game.disguise.DisguiseData;
 import matanku.kakurembo.game.task.impl.*;
 import matanku.kakurembo.player.GamePlayer;
-import matanku.kakurembo.util.AmongUsUtil;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.util.Util;
 import matanku.kakurembo.api.bossbar.impl.GlobalBossBar;
@@ -20,8 +19,8 @@ import matanku.kakurembo.api.util.TaskTicker;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -40,8 +39,6 @@ public class Game {
     private GlobalBossBar gamePlayersBossBar;
     private TaskTicker currentTask;
     private int tick;
-    private int compTask;
-    private int fullTask;
 
     public Game returnThis() {
         return this;
@@ -54,8 +51,6 @@ public class Game {
         gamePlayersBossBar = new GlobalBossBar(BossBar.bossBar(Common.text("<aqua>またんくかくれんぼ"),0,BossBar.Color.BLUE, BossBar.Overlay.PROGRESS), "nokori");
         currentTask = new CountdownPhaseTask(seconds);
         tick = 0;
-        fullTask = 25;
-        compTask = 0;
         loaded = true;
     }
 
@@ -92,13 +87,12 @@ public class Game {
                     gamePlayer.setRole(GameRole.SEEKER);
                 } else {
                     gamePlayer.setRole(GameRole.HIDER);
-                    gamePlayer.setPlayerTasks(AmongUsUtil.generateTasks(settings.getAmongUsTasks()));
                 }
             }
 
-            Common.sendMessage(player, "","<yellow>あなたは今" + (settings.isAmongUs() ? gamePlayer.getRole().getAmongUsName() : gamePlayer.getRole().getColoredName()) + "<yellow>です!");
+            Common.sendMessage(player, "", "<yellow>あなたは今" + gamePlayer.getRole().getColoredName() + "<yellow>です!");
             if (gamePlayer.getRole().getGoal() != null) {
-                Common.sendMessage(player, "<yellow>勝利条件: <dark_aqua>" +  (settings.isAmongUs() ? gamePlayer.getRole().getAmongUsGoal() : gamePlayer.getRole().getGoal()));
+                Common.sendMessage(player, "<yellow>勝利条件: <dark_aqua>" + gamePlayer.getRole().getGoal());
             }
             Common.sendMessage(player, "");
         }
@@ -114,6 +108,8 @@ public class Game {
         for (GamePlayer gamePlayer : players.values()) {
             Player player = gamePlayer.getPlayer();
             GameRole role = gamePlayer.getRole();
+
+            if (getSettings().getSpeed() >= 1) player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, getSettings().getSpeed(),false,false));
             
             if (role == GameRole.HIDER) {
                 map.teleport(player);
@@ -121,11 +117,6 @@ public class Game {
                 gamePlayer.getDisguises().setDisguise(Util.disguise(player));
                 player.getInventory().setContents(role.getTools());
             }
-            /*
-            else if (role == GameRole.SEEKER) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 0, true, false));
-            }
-            */
         }
 
         currentTask = new HiderPhaseTask(seconds);
@@ -134,39 +125,24 @@ public class Game {
     public void startSeekerPhase(int seconds) {
         state = GameState.SEEKER_PHASE;
 
-        if (HideAndSeek.getINSTANCE().getGame().getSettings().isAmongUs()) {
-            for (GamePlayer gamePlayer : players.values()) {
-                Player player = gamePlayer.getPlayer();
-                GameRole role = gamePlayer.getRole();
+        Common.broadcastMessage("", GameRole.SEEKER.getColoredName() + "<yellow>が解放されました!", "<yellow>もし" + GameRole.SEEKER.getColoredName() + "<yellow>が<aqua>" + (seconds >= 60 ? (seconds / 60) + "分" : seconds + "秒") + "<yellow>以内にすべての" + GameRole.HIDER.getColoredName() + "<yellow>を見つけることができなかった場合," + GameRole.SEEKER.getColoredName() + "<yellow>が勝利します!", "<yellow>皆さんの幸運を祈る!", "");
 
+        for (GamePlayer gamePlayer : players.values()) {
+            Player player = gamePlayer.getPlayer();
+            GameRole role = gamePlayer.getRole();
+
+            if (role == GameRole.SEEKER) {
                 map.teleport(player);
-                gamePlayer.setDisguises(new DisguiseData(DisguiseTypes.BLOCK, "OAK_PLANKS"));
-                gamePlayer.getDisguises().setDisguise(Util.disguise(player));
-                player.getInventory().setContents(GameRole.HIDER.getTools());
-
-                if (role == GameRole.SEEKER) {
-                    player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, HideAndSeek.getINSTANCE().getGame().getSettings().isSwordFire()).build(true));
-                }
-            }
-        } else {
-            Common.broadcastMessage("", GameRole.SEEKER.getColoredName() + "<yellow>が解放されました!", "<yellow>もし" + GameRole.SEEKER.getColoredName() + "<yellow>が<aqua>" + (seconds >= 60 ? (seconds / 60) + "分" : seconds + "秒") + "<yellow>以内にすべての" + GameRole.HIDER.getColoredName() + "<yellow>を見つけることができなかった場合," + GameRole.SEEKER.getColoredName() + "<yellow>が勝利します!", "<yellow>皆さんの幸運を祈る!", "");
-
-            for (GamePlayer gamePlayer : players.values()) {
-                Player player = gamePlayer.getPlayer();
-                GameRole role = gamePlayer.getRole();
-
-                if (role == GameRole.SEEKER) {
-                    map.teleport(player);
-                    player.removePotionEffect(PotionEffectType.BLINDNESS);
-                    player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, HideAndSeek.getINSTANCE().getGame().getSettings().isSwordFire()).build(true));
-                }
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, HideAndSeek.getINSTANCE().getGame().getSettings().isSwordFire()).build(true));
             }
         }
         currentTask = new SeekerPhaseTask(seconds);
+        SeekerPhaseTask.setTracker(false);
     }
 
     public void end() throws AssertionError {
-        assert isStarted() : "You are not playing!";
+        assert isStarted() : "プレイ状態ではありません!";
 
         state = GameState.ENDING;
 

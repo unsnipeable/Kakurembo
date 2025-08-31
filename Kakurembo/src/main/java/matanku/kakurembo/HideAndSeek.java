@@ -3,6 +3,7 @@ package matanku.kakurembo;
 import lombok.Getter;
 import lombok.Setter;
 import matanku.kakurembo.api.util.Common;
+import matanku.kakurembo.api.util.ItemBuilder;
 import matanku.kakurembo.command.*;
 import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.enums.GameState;
@@ -11,6 +12,8 @@ import matanku.kakurembo.game.GameListener;
 import matanku.kakurembo.api.KakuremboAPI;
 import matanku.kakurembo.api.util.BasicConfigFile;
 import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.util.PlaceHolderAPIUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -53,16 +56,7 @@ public final class HideAndSeek extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new GameListener(), this);
 
-        this.getCommand("setbuilder").setExecutor(new setBuilderCommand());
-        this.getCommand("settrackerenabled").setExecutor(new SetTrackerEnabledCommand());
-        this.getCommand("countdown").setExecutor(new CountdownCommand());
-        this.getCommand("roleselect").setExecutor(new RoleSelectCommand());
-        this.getCommand("setlobby").setExecutor(new SetLobbyCommand());
-        this.getCommand("settings").setExecutor(new SettingsCommand());
-        this.getCommand("stopdisguise").setExecutor(new StopDisguiseCommand());
-        this.getCommand("stoptask").setExecutor(new StopTaskCommand());
-        this.getCommand("end").setExecutor(new EndCommand());
-        this.getCommand("mute").setExecutor(new muteCommand());
+        this.getCommand("hideandseek").setExecutor(new HideAndSeekCommand());
 
         new BukkitRunnable() {
             @Override
@@ -73,21 +67,21 @@ public final class HideAndSeek extends JavaPlugin {
                             gp.onTickParkour();
                         }
                         if (!getGame().isStarted() && getGame().getState() == GameState.WAITING) {
-                            gp.getPlayer().sendActionBar(Common.text("<red>シーカーになる確率: " + (int) ((getGame().getSettings().getMaxSeekers() / getGame().getPlayers().values().size()) * 100) + "% <aqua>ハイダーになる確率: " + (int) (100-((getGame().getSettings().getMaxSeekers() / getGame().getPlayers().values().size()) * 100)) + "%"));
+                            gp.getPlayer().sendActionBar(Common.text("<red>シーカーになる確率: " + (int)Math.round((double)getGame().getSettings().getMaxSeekers()/getGame().getPlayers().size()*100) + "% <aqua>ハイダーになる確率: " + (100-(int)Math.round((double)getGame().getSettings().getMaxSeekers()/getGame().getPlayers().size()*100)) + "%"));
+                        }
+
+                        if (!game.isStarted()) {
+                            gp.getPlayer().getInventory().setItem(1,Items.COSMETIC.getItem());
                         }
                     }
                 }
             }
         }.runTaskTimer(this,0L,1L);
 
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-            }
-        }.runTaskTimer(HideAndSeek.getINSTANCE(),0L,1L);
-
         Manager.register();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+            new PlaceHolderAPIUtil(this).register(); //
+        }
     }
 
     @Override

@@ -3,9 +3,10 @@ package matanku.kakurembo.player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import matanku.kakurembo.config.Messages;
+import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.enums.CheckPointStatus;
-import matanku.kakurembo.game.amongUs.GameAmongUsTask;
-import matanku.kakurembo.game.amongUs.VentLocation;
+import matanku.kakurembo.enums.DataManagerType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,39 +14,47 @@ import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.disguise.DisguiseData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class GamePlayer {
-
-    private boolean muted;
-
-    public String previousChat;
-
+    // constructor
     private final UUID uniqueID;
+
+    // player
+    private boolean muted;
+    public String previousChat = "";
+    private boolean enableBuild;
+
+    // game
     private GameRole role = GameRole.NONE;
     private int stanCooldown = 0;
     private int flagged = 0;
-    private boolean enableBuild;
-    @Setter
     private DisguiseData disguises;
-
+    public List<Messages.Message> unlockedKillMessage = new ArrayList<>(Arrays.stream(Messages.Message.values()).filter(Messages.Message::isUnlockedAsDefault).toList());
+    private Messages.Message selectedKillMessage = Messages.Message.DEFAULT;
+    private int coin;
     private int trollPoint = 0;
+    private int glowingHintCooldown = 0;
 
-    private GameAmongUsTask[] playerTasks;
-    private int doneTasks;
-    private boolean isVenting;
-    private Location VentCameraPos;
-    private ArrayList<VentLocation> Posses;
-
+    // parkour
     private boolean parkour = false;
     private int parkourTime;
     private int parkourTime2;
     private Location parkourSpawn = null;
     private Location checkPoint = null;
     private CheckPointStatus parkourStatus = CheckPointStatus.NOTPLAYING;
+
+    public void setCoin(int i) {
+        coin = i;
+
+        Manager.getDataManager("CoinDataManager").addPlayerInfoInteger(getPlayer().getUniqueId().toString(), i, DataManagerType.SET);
+
+    }
 
     public void onTickParkour() {
         if (parkour) {

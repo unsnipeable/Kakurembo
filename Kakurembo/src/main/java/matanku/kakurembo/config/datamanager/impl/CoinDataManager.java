@@ -9,27 +9,27 @@ import org.bukkit.Location;
 
 import java.util.UUID;
 
-public class TrollDataManager extends DataManager {
+public class CoinDataManager extends DataManager {
     @Override
     public String configName() {
-        return "troll";
+        return "coins";
     }
 
     @Override
     public Location loc() {
-        return Bukkit.getWorld("world").getBlockAt(15,-56 ,16).getLocation();
+        return Bukkit.getWorld("world").getBlockAt(15,-56 ,21).getLocation();
     }
-
 
     @Override
     public String name() {
-        return "Troll Point";
+        return "Coin";
     }
 
     @Override
     public String calc(double d) {
         return (int)d + "";
     }
+
 
     @Override
     public DataType type() {
@@ -38,7 +38,7 @@ public class TrollDataManager extends DataManager {
 
     @Override
     public void setVariable(String playerName, Integer i) {
-        HideAndSeek.getINSTANCE().getGame().getGamePlayer(UUID.fromString(playerName)).setTrollPoint(i);
+        HideAndSeek.getINSTANCE().getGame().getGamePlayer(UUID.fromString(playerName)).setCoin(i);
     }
 
     @Override

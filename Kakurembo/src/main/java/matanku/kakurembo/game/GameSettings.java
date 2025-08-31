@@ -24,9 +24,7 @@ public class GameSettings {
     private boolean antiCheatEnabled = true;
     private boolean swordFire = false;
     private boolean instaKill = false;
-    private boolean amongUs = false;
     private int speed = 0;
-    private int amongUsTasks = 5;
 
     private Map<String, Integer> times = new HashMap<>() {{
         put("hider_time", 30);

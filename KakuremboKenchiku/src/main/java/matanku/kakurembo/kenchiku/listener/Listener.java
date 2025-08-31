@@ -63,6 +63,6 @@ public class Listener implements org.bukkit.event.Listener {
         String message = LegacyComponentSerializer.legacySection().serialize(event.message());
 
         event.setCancelled(true);
-        Common.broadcastMessage("<gray>[" + player.getWorld().getName() + "] <gold>[BUILDER] " + player + "<white>: " + message);
+        Common.broadcastMessage("<gray>[" + player.getWorld().getName() + "] <gold>[BUILDER] " + player.getName() + "<white>: " + message);
     }
 }

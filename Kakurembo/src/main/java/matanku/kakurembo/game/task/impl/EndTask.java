@@ -4,12 +4,12 @@ import matanku.kakurembo.config.datamanager.DataManager;
 import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
 import matanku.kakurembo.config.datamanager.impl.TrollDataManager;
+import matanku.kakurembo.enums.DataManagerType;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.api.util.Common;
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.BlockDisplay;
@@ -17,6 +17,7 @@ import org.bukkit.entity.Entity;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class EndTask extends GameTask {
@@ -26,55 +27,30 @@ public class EndTask extends GameTask {
     public EndTask() {
         super(7);
 
-        if (game.getSettings().isAmongUs()) {
-            if (game.getCompTask() == game.getFullTask()) {
-                winner = GameRole.HIDER;
-            } else {
-                winner = GameRole.SEEKER;
-            }
+        if (game.getPlayers().values().stream().noneMatch(gp -> gp.getRole() == GameRole.HIDER)) {
+            winner = GameRole.SEEKER;
         } else {
-            if (game.getPlayers().values().stream().noneMatch(gp -> gp.getRole() == GameRole.HIDER)) {
-                winner = GameRole.SEEKER;
-            } else {
-                winner = GameRole.HIDER;
-            }
+            winner = GameRole.HIDER;
         }
     }
 
     @Override
     public void preRun() {
 
-        if (game.getSettings().isAmongUs()) {
-            Common.broadcastMessage(
-                    "",
-                    "<yellow>ゲームオーバー!",
-                    winner.getAmongUsName() + "<green>が勝利しました!",
-                    winner.getAmongUsName() + "<yellow>そのチームのメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>")),
-                    ""
-            );
-        } else {
-            Common.broadcastMessage(
-                    "",
-                    "<yellow>ゲームオーバー!",
-                    winner.getColoredName() + "<green>が勝利しました!",
-                    winner.getColoredName() + "<yellow>のメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>"))
-            );
-            List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPoint).reversed()).limit(3).toList();
-            Common.broadcastMessage(
-                    "",
-                    "<gold>««　<yellow>トロールポイントランキング　<gold>»»",
-                    "<white>|  <gold>1位: <gold>" + top3.get(0).getPlayer().getName() + " (" + top3.get(0).getTrollPoint() + ")",
-                    (top3.size() > 1 ? "<white>|  <gray>2位: <gold>" + top3.get(1).getPlayer().getName() + " (" + top3.get(1).getTrollPoint() + ")" : "<white>|  <light_gray>2位: なし"),
-                    (top3.size() > 2 ? "<white>|  <dark_red>3位: <gold>" + top3.get(2).getPlayer().getName() + " (" + top3.get(2).getTrollPoint() + ")" : "<white>|  <dark_red>3位: なし"),
-                    ""
-            );
-        }
+        Common.broadcastMessage(
+                "",
+                "<yellow>ゲームオーバー!",
+                winner.getColoredName() + "<green>が勝利しました!",
+                winner.getColoredName() + "<yellow>のメンバー: <aqua>" + game.getPlayers().values().stream().filter(gp -> gp.getRole() == winner).map(gp -> gp.getPlayer().getName()).collect(Collectors.joining("<gray>, <aqua>"))
+        );
+        List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPoint).reversed()).limit(3).toList();
+        Common.broadcastMessage(
+                "", "<gold>««　<yellow>トロールポイントランキング　<gold>»»", "<white>|  <gold>1位: <gold>" + top3.get(0).getPlayer().getName() + " (" + (top3.get(0).getTrollPoint() == 0 ? "なし" : top3.get(0).getTrollPoint()) + ")", (top3.size() > 1 ? "<white>|  <gray>2位: <gold>" + top3.get(1).getPlayer().getName() + " (" + (top3.get(1).getTrollPoint() == 0 ? "なし" : top3.get(1).getTrollPoint()) + ")" : "<white>|  <light_gray>2位: なし"), (top3.size() > 2 ? "<white>|  <dark_red>3位: <gold>" + top3.get(2).getPlayer().getName() + " (" + (top3.get(2).getTrollPoint() == 0 ? "なし" : top3.get(2).getTrollPoint()) + ")" : "<white>|  <dark_red>3位: なし"), ""
+        );
 
 
-        if (!game.getSettings().isAmongUs()) {
-            game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
-            game.getBossBar().show();
-        }
+        game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);
+        game.getBossBar().show();
 
 
         game.setLoaded(false);
@@ -83,11 +59,8 @@ public class EndTask extends GameTask {
             gamePlayer.setDisguises(null);
             gamePlayer.setFlagged(0);
 
-            for (DataManager dm : Manager.getManagers()) {
-                if (dm instanceof ParkourDataManager) {
-                    dm.addPlayerInfo2(gamePlayer.getPlayer().getName(), gamePlayer.getTrollPoint());
-                }
-            }
+
+            Objects.requireNonNull(Manager.getDataManager("TrollDataManager")).addPlayerInfoInteger(gamePlayer.getUniqueID().toString(), gamePlayer.getTrollPoint(), DataManagerType.ADD);
             gamePlayer.setTrollPoint(0);
         }
 
