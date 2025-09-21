@@ -67,10 +67,10 @@ public class PlaceHolderAPIUtil extends PlaceholderExpansion {
             return (Math.max(plugin.getGame().getGamePlayer(player).getGlowingHintCooldown(), 0)) + "s";
         }
         if (params.equalsIgnoreCase("pTime")) {
-            return df.format(plugin.getGame().getGamePlayer(player).getParkourTime()) + "s";
+            return df.format((double)(plugin.getGame().getGamePlayer(player).getParkourTime()/20)) + "s";
         }
         if (params.equalsIgnoreCase("pTimeLap")) {
-            return df.format(plugin.getGame().getGamePlayer(player).getParkourTime2()) + "s";
+            return df.format((double)(plugin.getGame().getGamePlayer(player).getParkourTime2()/20)) + "s";
         }
         if (params.equalsIgnoreCase("pStatus")) {
             return plugin.getGame().getGamePlayer(player).getParkourStatus().i + "";

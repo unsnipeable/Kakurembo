@@ -59,7 +59,7 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.INSTANCE.getGame();
 
         if (Config.WHITELIST) {
-            if (!Bukkit.getOfflinePlayer(event.getUniqueId()).isOp()) return;
+            if (Bukkit.getOfflinePlayer(event.getUniqueId()).isOp()) return;
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Common.text("<red>現在メンテナンス中です。"));
         }
         if (game.isStarted()) {
