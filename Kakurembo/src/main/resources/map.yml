@@ -1,0 +1,9 @@
+maps:
+  Diamond:
+    disguises:
+      blocks:
+        - "DIAMOND_BLOCK"
+        - "GOLD_BLOCK"
+        - "SAND"
+      mobs:
+        - "COW"
