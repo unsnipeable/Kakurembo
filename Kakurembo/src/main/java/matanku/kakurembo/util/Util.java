@@ -94,7 +94,7 @@ public class Util {
     }
 
     public static Disguise disguise(Player player) {
-        GamePlayer gamePlayer = HideAndSeek.INSTANCE.getGame().getGamePlayer(player);
+        GamePlayer gamePlayer = HideAndSeek.Instance.getGame().getGamePlayer(player);
         DisguiseData disguiseData = gamePlayer.getDisguises();
 
         if (disguiseData.getType() == DisguiseTypes.BLOCK) {

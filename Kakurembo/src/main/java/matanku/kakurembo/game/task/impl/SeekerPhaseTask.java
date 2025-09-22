@@ -124,7 +124,7 @@ public class SeekerPhaseTask extends GameTask {
                                             entry.getValue().getPlayer().playSound(entry.getValue().getPlayer().getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1f, 1.4f);
                                             count++;
                                         }
-                                    }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 10L);
+                                    }.runTaskTimer(HideAndSeek.getInstance(), 0L, 10L);
                                 }
                             }
                         }

@@ -27,7 +27,7 @@ public class GamePlayer {
 
     // player
     private boolean muted;
-    public String previousChat = "";
+    public String previousChat = null;
     private boolean enableBuild;
 
     // game

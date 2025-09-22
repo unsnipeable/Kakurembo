@@ -16,8 +16,8 @@ public class CountdownPhaseTask extends GameTask {
     @Override
     public void onRun() {
         if (tick == 0) {
-            if (HideAndSeek.getINSTANCE().isLoad()) return;
-            HideAndSeek.getINSTANCE().setLoad(true);
+            if (HideAndSeek.getInstance().isLoad()) return;
+            HideAndSeek.getInstance().setLoad(true);
             cancel();
             game.generateWorld();
             return;

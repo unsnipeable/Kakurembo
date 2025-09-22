@@ -32,7 +32,7 @@ public class RoleSelectMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        GamePlayer gamePlayer = HideAndSeek.INSTANCE.getGame().getGamePlayer(player);
+        GamePlayer gamePlayer = HideAndSeek.Instance.getGame().getGamePlayer(player);
 
         buttons.put(11, new Button() {
             @Override
@@ -64,7 +64,7 @@ public class RoleSelectMenu extends Menu {
     }
 
     private void selectRole(GamePlayer gamePlayer, GameRole role) {
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
         Player player = gamePlayer.getPlayer();
         if (game.isStarted()) {
             Common.sendMessage(player, "<red>ゲーム開始後に自分の役職を設定することはできません");

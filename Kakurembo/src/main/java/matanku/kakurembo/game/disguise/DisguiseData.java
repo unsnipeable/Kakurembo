@@ -20,21 +20,21 @@ public class DisguiseData {
     private Disguise disguise;
 
     public DisguiseData() {
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
 
         List<DisguiseTypes> types = new ArrayList<>();
-        if (!HideAndSeek.INSTANCE.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.blocks").isEmpty()) {
+        if (!HideAndSeek.Instance.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.blocks").isEmpty()) {
             types.add(DisguiseTypes.BLOCK);
         }
-        if (!HideAndSeek.INSTANCE.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.mobs").isEmpty()) {
+        if (!HideAndSeek.Instance.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.mobs").isEmpty()) {
             types.add(DisguiseTypes.MOB);
         }
 
         this.type = Util.random(types);
         if (this.type == DisguiseTypes.BLOCK) {
-            this.data = Util.random(HideAndSeek.INSTANCE.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.blocks"));
+            this.data = Util.random(HideAndSeek.Instance.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.blocks"));
         } else if (this.type == DisguiseTypes.MOB) {
-            this.data = Util.random(HideAndSeek.INSTANCE.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.mobs"));
+            this.data = Util.random(HideAndSeek.Instance.getMapFile().getStringList("maps." + game.getSettings().getMap() + ".disguises.mobs"));
         } else {
             throw new NullPointerException("Cannot find a suitable DisguiseTypes");
         }

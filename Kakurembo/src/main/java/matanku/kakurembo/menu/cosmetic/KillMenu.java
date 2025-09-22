@@ -27,7 +27,7 @@ public class KillMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        final Game game = HideAndSeek.INSTANCE.getGame();
+        final Game game = HideAndSeek.Instance.getGame();
 
         for (Messages.Message gs : Messages.Message.values()) {
             buttons.put(buttons.size(), new Button() {
@@ -53,7 +53,7 @@ public class KillMenu extends Menu {
                     for (Map.Entry<String, String> entry : replaces.entrySet()) {
                         selected = selected.replace("%" + entry.getKey() + "%", entry.getValue());
                     }
-                    GamePlayer gamePlayer = HideAndSeek.INSTANCE.getGame().getGamePlayer(player);
+                    GamePlayer gamePlayer = HideAndSeek.Instance.getGame().getGamePlayer(player);
                     boolean isSelected = (gamePlayer.getSelectedKillMessage() == gs);
                     List<Messages.Message> unlocked = gamePlayer.getUnlockedKillMessage();
                     String checkMessage = isSelected ? ("<green>選択済み"):(unlocked.contains(gs) ? "<aqua>解放済み" : "<red>まだ解放されていません");
@@ -63,10 +63,10 @@ public class KillMenu extends Menu {
 
                 @Override
                 public void clicked(Player player, ClickType clickType) {
-                    GamePlayer gamePlayer = HideAndSeek.INSTANCE.getGame().getGamePlayer(player);
+                    GamePlayer gamePlayer = HideAndSeek.Instance.getGame().getGamePlayer(player);
                     List<Messages.Message> unlocked = gamePlayer.getUnlockedKillMessage();
                     if (unlocked.contains(gs)) {
-                        HideAndSeek.INSTANCE.getGame().getGamePlayer(player).setSelectedKillMessage(gs);
+                        HideAndSeek.Instance.getGame().getGamePlayer(player).setSelectedKillMessage(gs);
                         Common.sendMessage(player, "<green>" +gs.getTitle()+" キルメッセージを選択しました。");
                     } else {
                         if (gamePlayer.getCoin() >= gs.getUnlockCoin()) {

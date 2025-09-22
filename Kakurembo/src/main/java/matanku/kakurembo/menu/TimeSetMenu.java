@@ -24,7 +24,7 @@ public class TimeSetMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        final Game game = HideAndSeek.INSTANCE.getGame();
+        final Game game = HideAndSeek.Instance.getGame();
 
         for (ConfigurableTimes gs : ConfigurableTimes.values()) {
             buttons.put(buttons.size(), new IntegerButton() {

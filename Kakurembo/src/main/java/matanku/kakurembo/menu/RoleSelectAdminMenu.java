@@ -27,7 +27,7 @@ public class RoleSelectAdminMenu extends Menu {
     public Map<Integer, Button> getButtons(Player viewer) {
         final Map<Integer, Button> buttons = new HashMap<>();
 
-        for (GamePlayer gamePlayer : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+        for (GamePlayer gamePlayer : HideAndSeek.Instance.getGame().getPlayers().values()) {
             Player player = gamePlayer.getPlayer();
             GameRole role = gamePlayer.getRole();
 
@@ -61,19 +61,19 @@ public class RoleSelectAdminMenu extends Menu {
         buttons.put(3, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.STRUCTURE_VOID).name("<yellow>" + GameRole.NONE + "人数: <aqua>" + HideAndSeek.INSTANCE.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.NONE).count()).build();
+                return new ItemBuilder(Material.STRUCTURE_VOID).name("<yellow>" + GameRole.NONE + "人数: <aqua>" + HideAndSeek.Instance.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.NONE).count()).build();
             }
         });
         buttons.put(4, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.COW_SPAWN_EGG).name("<yellow>" + GameRole.HIDER + "人数: <aqua>" + HideAndSeek.INSTANCE.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.HIDER).count()).build();
+                return new ItemBuilder(Material.COW_SPAWN_EGG).name("<yellow>" + GameRole.HIDER + "人数: <aqua>" + HideAndSeek.Instance.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.HIDER).count()).build();
             }
         });
         buttons.put(5, new Button() {
             @Override
             public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.DIAMOND_SWORD).name("<yellow>" + GameRole.SEEKER + "人数: <aqua>" + HideAndSeek.INSTANCE.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.SEEKER).count()).build();
+                return new ItemBuilder(Material.DIAMOND_SWORD).name("<yellow>" + GameRole.SEEKER + "人数: <aqua>" + HideAndSeek.Instance.getGame().getPlayers().values().stream().filter(gp -> gp.getRole() == GameRole.SEEKER).count()).build();
             }
         });
         return buttons;

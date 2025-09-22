@@ -50,6 +50,6 @@ public class CosmeticDataManager extends DataManager {
                 u.add(Messages.getMessageFromI(i));
             }
         }
-        HideAndSeek.getINSTANCE().getGame().getGamePlayer(UUID.fromString(playerName)).setUnlockedKillMessage(u);
+        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setUnlockedKillMessage(u);
     }
 }

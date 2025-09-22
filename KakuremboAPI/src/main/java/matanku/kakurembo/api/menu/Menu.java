@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class Menu {
 
+    public Inventory gui;
     public Menu() {
         register();
     }
@@ -24,7 +25,7 @@ public class Menu {
     }
 
     public void openMenu(Player player) {
-        Inventory gui = Bukkit.createInventory(null, getSize(), getTitle(player));
+        this.gui = Bukkit.createInventory(null, getSize(), getTitle(player));
 
         if (this.getButtons(player) != null) {
             this.getButtons(player).forEach((k, v) -> {
@@ -33,9 +34,10 @@ public class Menu {
             });
         }
 
+        player.closeInventory();
         player.openInventory(gui);
-
     }
+
 
     public int getSize() {
         return 9;

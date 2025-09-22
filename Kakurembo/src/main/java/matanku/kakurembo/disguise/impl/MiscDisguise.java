@@ -37,7 +37,7 @@ public class MiscDisguise extends Disguise {
 
         blockDisplay = player.getLocation().getWorld().spawn(player.getLocation(), BlockDisplay.class, display -> {
             display.setBlock(Bukkit.createBlockData(material));
-            display.setMetadata(Game.DISGUISE_KEY, new FixedMetadataValue(HideAndSeek.INSTANCE, player.getUniqueId()));
+            display.setMetadata(Game.DISGUISE_KEY, new FixedMetadataValue(HideAndSeek.Instance, player.getUniqueId()));
             display.setTeleportDuration(1);
         });
 
@@ -55,7 +55,7 @@ public class MiscDisguise extends Disguise {
                 blockDisplay.teleport(location);
 
             }
-        }.runTaskTimer(HideAndSeek.INSTANCE, 0, 1L);
+        }.runTaskTimer(HideAndSeek.Instance, 0, 1L);
     }
 
     @Override

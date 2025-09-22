@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.IntConsumer;
-import java.util.function.IntSupplier;
 
 public class GameSettingsMenu extends Menu {
     @Override
@@ -35,7 +33,7 @@ public class GameSettingsMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        final Game game = HideAndSeek.INSTANCE.getGame();
+        final Game game = HideAndSeek.Instance.getGame();
 
         buttons.put(0, new ToggleButton() {
             @Override
@@ -482,13 +480,13 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
 
-                if (HideAndSeek.INSTANCE.getGame().getSettings().getMap() == null) {
+                if (HideAndSeek.Instance.getGame().getSettings().getMap() == null) {
                     Common.sendMessage(player, "<red>カウントダウンを開始しようとしたときにエラーが発生しました: マップがまだ選択されていません!");
                     new MapSelectMenu(new GameSettingsMenu()).openMenu(player);
                     return;
                 }
 
-                HideAndSeek.INSTANCE.getGame().startCountdown(10);
+                HideAndSeek.Instance.getGame().startCountdown(10);
                 player.closeInventory();
             }
         });

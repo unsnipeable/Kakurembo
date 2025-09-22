@@ -56,7 +56,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
 
         if (Config.WHITELIST) {
             if (Bukkit.getOfflinePlayer(event.getUniqueId()).isOp()) return;
@@ -72,7 +72,7 @@ public class GameListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
 
         game.getPlayers().putIfAbsent(player.getUniqueId(), new GamePlayer(player.getUniqueId()));
 
@@ -98,7 +98,7 @@ public class GameListener implements Listener {
             Common.sendMessage(player, "<aqua>あなたは途中参加したため、" + GameRole.SEEKER.getColoredName() + "として参加しました!");
             if (game.getCurrentTask() instanceof SeekerPhaseTask) {
                 game.getMap().teleport(player);
-                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
+                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
             } else {
                 player.teleport(Config.LOBBY_LOCATION);
             }
@@ -110,7 +110,7 @@ public class GameListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
 
         game.getPlayers().remove(player.getUniqueId());
         if (HideAndSeek.getGamePlayerByPlayer(player) != null) {
@@ -119,7 +119,7 @@ public class GameListener implements Listener {
 
         for (World w : Bukkit.getWorlds()) {
             for (Entity e : w.getEntities()) {
-                if (e.getMetadata(Game.DISGUISE_KEY).contains(new FixedMetadataValue(HideAndSeek.INSTANCE, player.getUniqueId()))) {
+                if (e.getMetadata(Game.DISGUISE_KEY).contains(new FixedMetadataValue(HideAndSeek.Instance, player.getUniqueId()))) {
                     e.remove();
                 }
             }
@@ -136,7 +136,7 @@ public class GameListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
 
 
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
         if (event instanceof EntityDamageByEntityEvent) {
             if (event.getEntity() instanceof Player entity && ((EntityDamageByEntityEvent) event).getDamager() instanceof Player damager) {
                 GamePlayer gameEntity = game.getGamePlayer(entity);
@@ -158,7 +158,7 @@ public class GameListener implements Listener {
                 }
             }
         }
-        if (HideAndSeek.INSTANCE.getGame().getState() != GameState.SEEKER_PHASE) {
+        if (HideAndSeek.Instance.getGame().getState() != GameState.SEEKER_PHASE) {
             event.setCancelled(true);
             return;
         }
@@ -203,7 +203,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
         if (event.getEntity() instanceof Player entity && event.getDamager() instanceof Player damager) {
 
             GamePlayer gameEntity = game.getGamePlayer(entity);
@@ -248,7 +248,7 @@ public class GameListener implements Listener {
     public void onDeath(GamePlayerDeathEvent event) {
         event.setCancelled(true);
 
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
         Player player = event.getPlayer();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
@@ -258,7 +258,7 @@ public class GameListener implements Listener {
         gamePlayer.setRole(GameRole.SEEKER);
         game.getMap().teleport(player);
         player.getInventory().clear();
-        player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, game.getSettings().isSwordFire()).build(true));
+        player.getInventory().addItem(new ItemBuilder(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, game.getSettings().isSwordFire()).build(true));
 
         for (PotionEffect pe : player.getActivePotionEffects()) {
             if (pe.getType() == PotionEffectType.GLOWING) {
@@ -277,7 +277,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
-        if (HideAndSeek.getINSTANCE().getGame().getGamePlayer(e.getPlayer()).isEnableBuild()) {
+        if (HideAndSeek.getInstance().getGame().getGamePlayer(e.getPlayer()).isEnableBuild()) {
             if (LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(e.line(0))).equalsIgnoreCase("[gamble]")) {
                 e.line(0, Common.text("<gold><bold>[SLOT]"));
                 e.line(3, Common.text("<green><b><u>CLICK TO PLAY<!u><!b>"));
@@ -375,7 +375,7 @@ public class GameListener implements Listener {
         Action action = event.getAction();
         ItemStack itemStack = event.getItem();
         Block block = event.getClickedBlock();
-        Game game = HideAndSeek.INSTANCE.getGame();
+        Game game = HideAndSeek.Instance.getGame();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
         if (Items.COSMETIC.getItem().equals(itemStack)) {
@@ -542,7 +542,7 @@ public class GameListener implements Listener {
                                     sign.getSide(Side.FRONT).line(1,Common.text("<white><b>" + S[0] +" " + S[1] + " " + S[2] + "<!b>"));
                                     sign.update();
                                 }
-                            }.runTaskTimer(HideAndSeek.getINSTANCE(),0L,1L);
+                            }.runTaskTimer(HideAndSeek.getInstance(),0L,1L);
                         } else {
                             Common.sendMessage(player, "<light_purple>[KakuremboGamble]<white> 賭けるためには10コインが必要です!");
                         }
@@ -563,7 +563,7 @@ public class GameListener implements Listener {
             gamePlayer.getDisguises().getDisguise().stopDisguise();
             gamePlayer.setRole(GameRole.SEEKER);
             game.getMap().teleport(player);
-            player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
+            player.getInventory().addItem(new ItemBuilder(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
             Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + gamePlayer.getFlagged() + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
             if (game.canEnd()) {
                 game.end();
@@ -580,11 +580,11 @@ public class GameListener implements Listener {
         GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
 
 
-        if (!(player.getWorld() == Bukkit.getWorld("world"))) {
+        if (!player.getWorld().equals(Bukkit.getWorld("world")) && HideAndSeek.Instance.getGame().isStarted()) {
             return;
         }
 
-        if (gamePlayer != null && !HideAndSeek.getINSTANCE().getGame().isStarted()) {
+        if (gamePlayer != null && !HideAndSeek.getInstance().getGame().isStarted()) {
 
             if (player.getLocation().getY() <= -70) {
                 if (gamePlayer.isParkour()) {
@@ -664,22 +664,24 @@ public class GameListener implements Listener {
             for (Map.Entry<Integer, Button> entry : buttons.entrySet()) {
                 Button v = entry.getValue();
                 if (v.getButtonItem(player).isSimilar(is)) {
-                    if (HideAndSeek.INSTANCE.getGame().isStarted()) {
+                    if (HideAndSeek.Instance.getGame().isStarted()) {
                         if (v instanceof IntegerButton || v instanceof ToggleButton) {
                             Common.sendMessage(player, "<red>試合が始まっているため、読み取り専用です。");
                             event.setCancelled(true);
+                            return;
                         }
                     } else {
                         clicked(v, player, clickType);
+                        event.setCancelled(true);
+                        return;
                     }
                 }
             }
         }
 
-        for (GamePlayer ga : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+        for (GamePlayer ga : HideAndSeek.Instance.getGame().getPlayers().values()) {
             if (ga.getPlayer().getName().contains(player.getName())) {
-                if (!ga.isEnableBuild())
-                    event.setCancelled(true);
+                if (ga.isEnableBuild() && !HideAndSeek.Instance.getGame().isStarted()) event.setCancelled(false);
             }
         }
     }
@@ -720,15 +722,15 @@ public class GameListener implements Listener {
         String message = LegacyComponentSerializer.legacySection().serialize(event.message());
         event.setCancelled(true);
 
-        GamePlayer gamePlayer = HideAndSeek.getINSTANCE().getGame().getGamePlayer(player);
+        GamePlayer gamePlayer = HideAndSeek.getInstance().getGame().getGamePlayer(player);
 
-        if (gamePlayer.previousChat.equalsIgnoreCase(message)) {
+        if (gamePlayer.previousChat != null && (message.startsWith(gamePlayer.previousChat) || gamePlayer.previousChat.equalsIgnoreCase(message))) {
             Common.sendMessage(player,Common.text("<red>チャットをスパムしないでください！"));
             return;
         }
         gamePlayer.previousChat = message;
 
-        if (HideAndSeek.getINSTANCE().getGame().getGamePlayer(player).isMuted()) {
+        if (HideAndSeek.getInstance().getGame().getGamePlayer(player).isMuted()) {
             Common.sendMessage(player,Common.text("<gold><strikethrough>                                     <bold>"),Common.text("<red>          <bold>MUTE"),Common.text(""),Common.text("<gold>あなたは現在muteされています!"),Common.text("<gray>matanku network"),Common.text("<gold><strikethrough>                                     <bold>"));
             return;
         }

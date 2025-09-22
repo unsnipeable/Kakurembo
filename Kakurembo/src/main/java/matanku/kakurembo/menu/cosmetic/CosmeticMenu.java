@@ -1,5 +1,6 @@
 package matanku.kakurembo.menu.cosmetic;
 
+import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.api.menu.Button;
 import matanku.kakurembo.api.menu.Menu;
 import matanku.kakurembo.api.util.Common;
@@ -41,4 +42,5 @@ public class CosmeticMenu extends Menu {
 
         return buttons;
     }
+
 }

@@ -26,10 +26,10 @@ public class Manager {
     public static void register() {
         register(false);
     }
-    public static void register(boolean b) {
+    public static void register(boolean withoutCreateHologram) {
         if (managers == null) init();
         for (DataManager dm : managers.values()) {
-            if (!b) {
+            if (withoutCreateHologram) {
                 dm.loadDataFile();
             } else {
                 dm.onEnable();

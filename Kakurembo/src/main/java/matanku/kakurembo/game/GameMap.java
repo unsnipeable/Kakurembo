@@ -17,7 +17,7 @@ public class GameMap {
     private String name;
 
     public GameMap() {
-        File mapFolder = new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/");
+        File mapFolder = new File("plugins/" + HideAndSeek.Instance.getDescription().getName() + "/maps/");
         if (!mapFolder.exists()) {
             mapFolder.mkdir();
         }
@@ -27,8 +27,8 @@ public class GameMap {
         removeMap(worldName);
 
         try {
-            name = HideAndSeek.INSTANCE.getGame().getSettings().getMap();
-            Util.copyFolder(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/" + getName()), new File(Bukkit.getWorldContainer() + File.separator + worldName));
+            name = HideAndSeek.Instance.getGame().getSettings().getMap();
+            Util.copyFolder(new File("plugins/" + HideAndSeek.Instance.getDescription().getName() + "/maps/" + getName()), new File(Bukkit.getWorldContainer() + File.separator + worldName));
             world = Util.loadWorld(worldName);
             callback.accept(true);
         } catch (Exception e) {

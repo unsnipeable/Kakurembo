@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -36,12 +37,12 @@ public abstract class DataManager implements IDataManager {
                 public void run() {
                     updateHologramLines();
                 }
-            }.runTaskTimer(HideAndSeek.getINSTANCE(), 0L, 20L); // 毎秒更新
+            }.runTaskTimer(HideAndSeek.getInstance(), 0L, 20L); // 毎秒更新
         }
     }
 
     public void loadDataFile() {
-        dataFile = new File(HideAndSeek.getINSTANCE().getDataFolder() + "/data/", configName() + ".yml");
+        dataFile = new File(HideAndSeek.getInstance().getDataFolder() + "/data/", configName() + ".yml");
         if (!dataFile.exists()) {
             dataFile.getParentFile().mkdirs();
             try (FileWriter writer = new FileWriter(dataFile)) {
@@ -106,15 +107,12 @@ public abstract class DataManager implements IDataManager {
         return result;
     }
 
-    public void setHoloLocation(Location location) {
-        hologram.setLocation(location);
-    }
 
     public void createEmptyHologram(Location location) {
         List<String> lines = new ArrayList<>();
         lines.add("&e&l" + name() + " Leaderboard");
         for (int i = 1; i <= 10; i++) lines.add("&e" + i + ". &8Loading...");
-        hologram = DHAPI.createHologram(configName() + "_LB", location, lines);
+        hologram = DHAPI.createHologram(configName() + "_LB", location.clone().add(new Vector(0,5,0)), lines);
     }
 
     public void updateHologramLines() {

@@ -13,7 +13,7 @@ public abstract class GameTask extends TaskTicker {
         this.seconds = seconds;
     }
 
-    public final Game game = HideAndSeek.INSTANCE.getGame();
+    public final Game game = HideAndSeek.Instance.getGame();
 
 
 }

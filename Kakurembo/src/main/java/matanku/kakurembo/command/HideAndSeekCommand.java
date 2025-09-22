@@ -46,7 +46,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                         if (!commandSender.hasPermission("op")) {
                             Common.sendMessage(commandSender, "<red>あなたはこのコマンドを使用する権限がありません!");
                         } else {
-                            Manager.register();
+                            Manager.register(true);
                             Common.sendMessage(commandSender, "<gray>Successfully Reloaded Leaderboards");
                         }
                         return true;
@@ -71,8 +71,8 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                                 Location location = ((Player)commandSender).getLocation();
 
                                 Config.LOBBY_LOCATION = location;
-                                HideAndSeek.INSTANCE.getConfigFile().getConfiguration().set("lobby-location", LocationSerialization.serializeLocation(location));
-                                HideAndSeek.INSTANCE.getConfigFile().save();
+                                HideAndSeek.Instance.getConfigFile().getConfiguration().set("lobby-location", LocationSerialization.serializeLocation(location));
+                                HideAndSeek.Instance.getConfigFile().save();
 
                                 Common.sendMessage(((Player)commandSender), "<green>ロビーを設定しました!");
                                 return true;
@@ -102,7 +102,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                             }
                             case "end":{
                                 try {
-                                    HideAndSeek.getINSTANCE().getGame().end();
+                                    HideAndSeek.getInstance().getGame().end();
                                 } catch (AssertionError error) {
                                     Common.sendMessage((Player)commandSender, Common.text("<red>" + error.getMessage()));
                                 }
@@ -125,7 +125,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                         switch (strings[1].toLowerCase()) {
                             case "builder": {
                                 GamePlayer gp = null;
-                                for (GamePlayer ga : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+                                for (GamePlayer ga : HideAndSeek.Instance.getGame().getPlayers().values()) {
                                     if (ga.getPlayer().getName().contains(strings[2])) {
                                         gp = ga;
                                     }
@@ -143,7 +143,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                             }
                             case "setcoin": {
                                 GamePlayer gp = null;
-                                for (GamePlayer ga : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+                                for (GamePlayer ga : HideAndSeek.Instance.getGame().getPlayers().values()) {
                                     if (ga.getPlayer().getName().equalsIgnoreCase(strings[2])) {
                                         gp = ga;
                                     }
@@ -157,7 +157,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                             }
                             case "mute": {
                                 GamePlayer gp = null;
-                                for (GamePlayer ga : HideAndSeek.INSTANCE.getGame().getPlayers().values()) {
+                                for (GamePlayer ga : HideAndSeek.Instance.getGame().getPlayers().values()) {
                                     if (ga.getPlayer().getName().contains(strings[2])) {
                                         gp = ga;
                                     }
@@ -179,7 +179,7 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                         switch (strings[1].toLowerCase()) {
                             case "tracker": {
 
-                                if (!HideAndSeek.INSTANCE.getGame().isStarted()) {
+                                if (!HideAndSeek.Instance.getGame().isStarted()) {
                                     Common.sendMessage(commandSender, "<red>ゲームが開始されていません。");
                                     return false;
                                 }
@@ -193,13 +193,13 @@ public class HideAndSeekCommand implements CommandExecutor, TabCompleter {
                                 return true;
                             }
                             case "countdown": {
-                                if (HideAndSeek.INSTANCE.getGame().getSettings().getMap() == null) {
+                                if (HideAndSeek.Instance.getGame().getSettings().getMap() == null) {
                                     Common.sendMessage(commandSender, "<red>カウントダウンを開始しようとしたときにエラーが発生しました: マップがまだ選択されていません! '/settings'コマンドを使用してマップを選択してください！");
                                     return false;
                                 }
 
                                 if (Checker.isInteger(strings[2])) {
-                                    HideAndSeek.INSTANCE.getGame().startCountdown(Integer.parseInt(strings[2]));
+                                    HideAndSeek.Instance.getGame().startCountdown(Integer.parseInt(strings[2]));
 
                                     Common.sendMessage(commandSender, "<green>カウントダウンが始まります！");
                                     return true;

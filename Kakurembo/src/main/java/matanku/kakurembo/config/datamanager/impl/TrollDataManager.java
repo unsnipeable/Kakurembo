@@ -16,7 +16,7 @@ public class TrollDataManager extends DataManager {
 
     @Override
     public Location loc() {
-        return new Location(Bukkit.getWorld("world"), 6.0,-59,-6.0);
+        return new Location(Bukkit.getWorld("world"), 7.0,-59,-6.0);
     }
 
 
@@ -37,7 +37,7 @@ public class TrollDataManager extends DataManager {
 
     @Override
     public void setVariable(String playerName, Integer i) {
-        HideAndSeek.getINSTANCE().getGame().getGamePlayer(UUID.fromString(playerName)).setTrollPoint(i);
+        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setTrollPoint(i);
     }
 
     @Override

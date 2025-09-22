@@ -134,7 +134,7 @@ public class Game {
             if (role == GameRole.SEEKER) {
                 map.teleport(player);
                 player.removePotionEffect(PotionEffectType.BLINDNESS);
-                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getINSTANCE().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, HideAndSeek.getINSTANCE().getGame().getSettings().isSwordFire()).build(true));
+                player.getInventory().addItem(new ItemBuilder(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1, HideAndSeek.getInstance().getGame().getSettings().isSwordFire()).build(true));
             }
         }
         currentTask = new SeekerPhaseTask(seconds);

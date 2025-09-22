@@ -30,9 +30,9 @@ public class MapSelectMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        final Game game = HideAndSeek.INSTANCE.getGame();
-        final List<File> mapFolder = Arrays.stream(Objects.requireNonNull(new File("plugins/" + HideAndSeek.INSTANCE.getDescription().getName() + "/maps/").listFiles())).filter(File::isDirectory).toList();
-        final ConfigurationSection mapsSelection = HideAndSeek.INSTANCE.getMapFile().getConfiguration().getConfigurationSection("maps");
+        final Game game = HideAndSeek.Instance.getGame();
+        final List<File> mapFolder = Arrays.stream(Objects.requireNonNull(new File("plugins/" + HideAndSeek.Instance.getDescription().getName() + "/maps/").listFiles())).filter(File::isDirectory).toList();
+        final ConfigurationSection mapsSelection = HideAndSeek.Instance.getMapFile().getConfiguration().getConfigurationSection("maps");
 
         assert mapsSelection != null;
 

@@ -37,7 +37,7 @@ public class CoinDataManager extends DataManager {
 
     @Override
     public void setVariable(String playerName, Integer i) {
-        HideAndSeek.getINSTANCE().getGame().getGamePlayer(UUID.fromString(playerName)).setCoin(i);
+        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setCoin(i);
     }
 
     @Override
