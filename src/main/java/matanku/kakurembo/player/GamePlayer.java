@@ -99,6 +99,10 @@ public class GamePlayer {
         return format;
     }
 
+    public String getPrestigeFormatWithoutBracket() {
+        return getPrestigeFormat().replace("[", "").replace("]", "");
+    }
+
     public void setParkour(boolean bool) {
         if (!bool) {
             getPlayer().getInventory().clear();

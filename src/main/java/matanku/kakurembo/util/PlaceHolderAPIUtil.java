@@ -79,7 +79,7 @@ public class PlaceHolderAPIUtil extends PlaceholderExpansion {
             return (Math.max(plugin.getGame().getGamePlayer(player).getTrollPoint(), 0)) + "";
         }
         if (params.equalsIgnoreCase("star")) {
-            return plugin.getGame().getGamePlayer(player).getPrestigeFormat().replace("[", "").replace("]", "");
+            return plugin.getGame().getGamePlayer(player).getPrestigeFormatWithoutBracket();
         }
         if (params.equalsIgnoreCase("progress")) {
             return "進行状況: &a" + plugin.getGame().getGamePlayer(player).getXp() + "&7/&b1000";
