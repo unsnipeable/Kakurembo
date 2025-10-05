@@ -20,6 +20,7 @@ import matanku.kakurembo.menu.button.IntegerButton;
 import matanku.kakurembo.menu.button.ToggleButton;
 import matanku.kakurembo.util.Common;
 import matanku.kakurembo.util.Util;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -671,8 +672,9 @@ public class GameListener implements Listener {
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Common.sendMessage(p,Common.text(LegacyComponentSerializer.legacySection().deserialize(gamePlayer.getPrestigeFormat()) + " <gray>" + player.getName() + "<white>: " + message));
+            Common.sendMessage(p,Common.text(Common.convert(gamePlayer.getPrestigeFormat()) + " <gray>" + player.getName() + "<white>: " + message));
         }
     }
+
 
 }

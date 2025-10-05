@@ -2,6 +2,7 @@ package matanku.kakurembo.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -130,4 +131,7 @@ public class Common {
         return MiniMessage.miniMessage().deserialize(text);
     }
 
+    public String convert(String hi) {
+        return MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(hi));
+    }
 }
