@@ -106,6 +106,15 @@ public class GameListener implements Listener {
             Common.broadcastMessage("<yellow>" + player.getName() + "<aqua>は途中参加してきたので、" + GameRole.SEEKER.getColoredName() + "としてゲームに参加しました！");
         }
         event.joinMessage(Common.text("<gray>" + player.getName() +" <yellow>が参加しました (<aqua>" + Bukkit.getOnlinePlayers().size() + "<yellow>/<aqua>" + Bukkit.getMaxPlayers() + "<yellow>)!"));
+
+        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP,1f,1f);
+        Common.sendMessage(player,
+                "<gray><strikethrough>                                  <!strikethrough>",
+                "",
+                "<gold>              <bold> WELCOME BACK!",
+                "",
+                "<gray><strikethrough>                                  <!strikethrough>"
+        );
     }
 
     @EventHandler
