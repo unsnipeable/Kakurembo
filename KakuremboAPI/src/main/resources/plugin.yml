@@ -1,6 +1,0 @@
-name: api
-version: '${version}'
-main: matanku.kakurembo.api.KakuremboAPI
-api-version: 1.21
-author: matanku
-load: STARTUP
