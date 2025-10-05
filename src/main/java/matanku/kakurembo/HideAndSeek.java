@@ -15,6 +15,9 @@ import matanku.kakurembo.util.PlaceHolderAPIUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,20 +56,23 @@ public final class HideAndSeek extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GameListener(), this);
 
         this.getCommand("hideandseek").setExecutor(new HideAndSeekCommand());
+        this.getCommand("settings").setExecutor(new SettingsCommand());
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (game.getPlayers() != null) {
                     for (GamePlayer gp : game.getPlayers().values()) {
-                        if (!game.isStarted()) {
-                            gp.onTickParkour();
-                        }
                         if (!getGame().isStarted() && getGame().getState() == GameState.WAITING) {
                             gp.getPlayer().sendActionBar(Common.text("<red>シーカーになる確率: " + (int)Math.round((double)getGame().getSettings().getMaxSeekers()/getGame().getPlayers().size()*100) + "% <aqua>ハイダーになる確率: " + (100-(int)Math.round((double)getGame().getSettings().getMaxSeekers()/getGame().getPlayers().size()*100)) + "%"));
                         }
 
                         if (!game.isStarted()) {
+                            if (!gp.isParkour()) {
+                                gp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,Integer.MAX_VALUE,1, true, true));
+                            } else gp.getPlayer().removePotionEffect(PotionEffectType.SPEED);
+
+                            gp.onTickParkour();
                             gp.getPlayer().getInventory().setItem(1, Items.COSMETIC.getItem());
                         }
                     }
