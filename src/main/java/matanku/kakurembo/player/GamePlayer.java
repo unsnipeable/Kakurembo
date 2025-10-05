@@ -60,6 +60,12 @@ public class GamePlayer {
     private Location checkPoint = null;
     private CheckPointStatus parkourStatus = CheckPointStatus.NOTPLAYING;
 
+    public void setParkourSpawn(Location loc) {
+        Location p = loc.clone();
+        p.setPitch(0f);
+        parkourSpawn = p;
+    }
+
     public void addXp(int i) {
         xp2 += i;
         int t = i + xp;

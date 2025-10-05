@@ -131,7 +131,7 @@ public class Common {
         return MiniMessage.miniMessage().deserialize(text);
     }
 
-    public String convert(String hi) {
+    public static String convert(String hi) {
         return MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(hi));
     }
 }

@@ -2,10 +2,7 @@ package matanku.kakurembo.config.datamanager;
 
 import lombok.Getter;
 import lombok.NonNull;
-import matanku.kakurembo.config.datamanager.impl.CoinDataManager;
-import matanku.kakurembo.config.datamanager.impl.CosmeticDataManager;
-import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
-import matanku.kakurembo.config.datamanager.impl.TrollDataManager;
+import matanku.kakurembo.config.datamanager.impl.*;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +21,8 @@ public class Manager {
         managers.put(TrollDataManager.class,new TrollDataManager());
         managers.put(CoinDataManager.class,new CoinDataManager());
         managers.put(CosmeticDataManager.class,new CosmeticDataManager());
+        managers.put(StarProgressDataManager.class,new StarProgressDataManager());
+        managers.put(StarDataManager.class,new StarDataManager());
     }
 
     public static void register() {
