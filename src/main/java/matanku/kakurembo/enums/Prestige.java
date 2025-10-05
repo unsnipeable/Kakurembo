@@ -9,7 +9,7 @@ import matanku.kakurembo.player.GamePlayer;
 public enum Prestige {
 
     // bw pres
-    DEFAULT(0, "&f[%star%✫]"),
+    DEFAULT(0, "&7[%star%✫]"),
     IRON(10, "&f[%star%✫]"),
     GOLD(20, "&6[%star%✫]"),
     DIAMOND(30, "&b[%star%✫]"),

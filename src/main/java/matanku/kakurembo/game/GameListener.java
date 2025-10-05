@@ -109,11 +109,11 @@ public class GameListener implements Listener {
 
         player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP,1f,1f);
         Common.sendMessage(player,
-                "<gray><strikethrough>                                  <!strikethrough>",
+                "<gray><strikethrough>                                                              <!strikethrough>",
                 "",
                 "<gold>              <bold> WELCOME BACK!",
                 "",
-                "<gray><strikethrough>                                  <!strikethrough>"
+                "<gray><strikethrough>                                                              <!strikethrough>"
         );
     }
 
@@ -671,7 +671,7 @@ public class GameListener implements Listener {
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Common.sendMessage(p,Common.text(gamePlayer.getPrestigeFormat() + " <green>" + player.getName() + "<white>: " + message));
+            Common.sendMessage(p,Common.text(gamePlayer.getPrestigeFormat() + " <gray>" + player.getName() + "<white>: " + message));
         }
     }
 

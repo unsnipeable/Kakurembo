@@ -91,7 +91,7 @@ public class GamePlayer {
     public String getPrestigeFormat() {
         int star = getStar();
         Prestige prestige = Arrays.stream(Prestige.values()).filter(p -> p.getStar() <= star).reduce(Prestige.DEFAULT, (a, b) -> b);
-        String format = prestige.getFormat().replace("%star%", String.valueOf(star));
+        String format = prestige.getFormat().replace("%star%", String.valueOf(star)).replace("&", "§");
         String s = String.valueOf(star);
         for (int i = 0; i < Math.min(5, s.length()); i++) {
             format = format.replace("%" + (i + 1) + "%", String.valueOf(s.charAt(i)));
@@ -122,10 +122,6 @@ public class GamePlayer {
 
     public Player getPlayer() {
         return Bukkit.getPlayer(uniqueID);
-    }
-
-    public boolean isOnline() {
-        return getPlayer() != null && getPlayer().isOnline();
     }
 
 }
