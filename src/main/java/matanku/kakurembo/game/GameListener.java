@@ -401,7 +401,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_CHECKPOINT.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 player.teleport(gamePlayer.getCheckPoint());
-                Common.sendMessage(player, "<green>最後のチェックポイントにテレポートしました!");
+                Common.sendMessage(player, "<green><bold>PARKOUR <!bold><gray>» <white>最後のチェックポイントにテレポートしました!");
             }
             event.setCancelled(true);
             return;
@@ -409,7 +409,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_CANCEL.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 gamePlayer.setParkour(false);
-                Common.sendMessage(player, "<green>パルクールを終了しました!");
+                Common.sendMessage(player, "<green><bold>PARKOUR <!bold><gray>» <white>パルクールを終了しました!");
             }
             event.setCancelled(true);
             return;
@@ -417,7 +417,7 @@ public class GameListener implements Listener {
         if (Items.PARKOUR_SPAWN.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 player.teleport(gamePlayer.getParkourSpawn());
-                Common.sendMessage(player, "<green>パルクールのスタートにテレポートしました!");
+                Common.sendMessage(player, "<green><bold>PARKOUR <!bold><gray>» <white>パルクールのスタートにテレポートしました!");
             }
             event.setCancelled(true);
             return;
@@ -552,7 +552,7 @@ public class GameListener implements Listener {
                         gamePlayer.setCheckPoint(player.getLocation());
                         gamePlayer.setParkourSpawn(player.getLocation());
                         if (lag > 10) {
-                            Common.sendMessage(player, "<green>パルクール <gray>» <white>パルクールタイムがリセットされました!");
+                            Common.sendMessage(player, "<green><bold>PARKOUR <!bold><gray>» <white>パルクールタイムがリセットされました!");
                         }
                     } else {
                         gamePlayer.setParkour(true);
@@ -566,7 +566,7 @@ public class GameListener implements Listener {
                         gamePlayer.setParkourStatus(CheckPointStatus.WHITE);
                         gamePlayer.setCheckPoint(player.getLocation());
                         gamePlayer.setParkourSpawn(player.getLocation());
-                        Common.sendMessage(player, "<green>パルクール <gray>» <white>パルクールチャレンジが始まりました!");
+                        Common.sendMessage(player, "<green><bold>PARKOUR <!bold><gray>» <white>パルクールチャレンジが始まりました!");
                     }
                 } else if (block2Above.getType() == Material.BLUE_WOOL) {
                     if (gamePlayer.getParkourStatus() != CheckPointStatus.LIGHT_BLUE) {
@@ -671,7 +671,7 @@ public class GameListener implements Listener {
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Common.sendMessage(p,Common.text(gamePlayer.getPrestigeFormat() + " <gray>" + player.getName() + "<white>: " + message));
+            Common.sendMessage(p,Common.text(LegacyComponentSerializer.legacySection().deserialize(gamePlayer.getPrestigeFormat()) + " <gray>" + player.getName() + "<white>: " + message));
         }
     }
 
