@@ -37,7 +37,7 @@ public class StarProgressDataManager extends DataManager {
 
     @Override
     public void setVariable(String playerName, Integer i) {
-        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setProgress(i);
+        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setXp(i);
     }
 
     @Override
