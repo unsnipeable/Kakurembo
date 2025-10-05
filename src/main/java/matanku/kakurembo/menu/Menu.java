@@ -45,9 +45,15 @@ public class Menu {
 
 
     public int getSize(Player player) {
+        if (getButtons(player) == null || getButtons(player).isEmpty()) {
+            return 9;
+        }
+
+        int highestSlot = getButtons(player).keySet().stream().max(Integer::compareTo).orElse(0) + 1;
+
         int[] invSizes = {9,18,27,36,45,54};
-        for (int i : invSizes) {
-            if (getButtons(player).size() <= i) return i;
+        for (int size : invSizes) {
+            if (highestSlot <= size) return size;
         }
         return 54;
     }
