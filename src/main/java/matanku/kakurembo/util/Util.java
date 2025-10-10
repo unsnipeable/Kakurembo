@@ -3,13 +3,13 @@ package matanku.kakurembo.util;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.disguise.Disguise;
 import matanku.kakurembo.disguise.impl.MiscDisguise;
-import matanku.kakurembo.enums.DisguiseTypes;
 import matanku.kakurembo.game.disguise.DisguiseData;
 import matanku.kakurembo.player.GamePlayer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.*;
@@ -92,9 +92,9 @@ public class Util {
                 dest.mkdir();
             }
 
-            String files[] = src.list();
+            String[] files = src.list();
 
-            for(String file : files) {
+            for(String file : Objects.requireNonNull(files)) {
                 File srcFile = new File(src, file);
                 File destFile = new File(dest, file);
 
@@ -117,7 +117,7 @@ public class Util {
     }
 
     public static World loadWorld(String worldName) {
-        World world = new WorldCreator(worldName).createWorld();
+        World world = Objects.requireNonNull(new WorldCreator(worldName).createWorld());
 
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         world.setTime(0);
@@ -131,13 +131,9 @@ public class Util {
         GamePlayer gamePlayer = HideAndSeek.Instance.getGame().getGamePlayer(player);
         DisguiseData disguiseData = gamePlayer.getDisguises();
 
-        if (disguiseData.getType() == DisguiseTypes.BLOCK) {
             MiscDisguise disguise = new MiscDisguise(player, Material.valueOf(disguiseData.getData()));
             disguise.startDisguise();
             return disguise;
-        }
-
-        return null;
     }
 
     public static String getTime(int time) {

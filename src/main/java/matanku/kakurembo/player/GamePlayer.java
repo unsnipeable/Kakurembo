@@ -76,6 +76,8 @@ public class GamePlayer {
         }
         Manager.getDataManager(StarProgressDataManager.class).addPlayerInfoInteger(getPlayer().getUniqueId().toString(), t, DataEnum.DataManagerType.SET);
         Manager.getDataManager(StarDataManager.class).addPlayerInfoInteger(getPlayer().getUniqueId().toString(), level, DataEnum.DataManagerType.SET);
+        xp = t;
+        star = level;
     }
 
     public void setCoin(int i) {

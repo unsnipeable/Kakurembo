@@ -1,6 +1,7 @@
 package matanku.kakurembo.game.task.impl;
 
 import matanku.kakurembo.config.datamanager.Manager;
+import matanku.kakurembo.config.datamanager.impl.StarDataManager;
 import matanku.kakurembo.config.datamanager.impl.TrollDataManager;
 import matanku.kakurembo.enums.DataEnum;
 import matanku.kakurembo.enums.GameRole;
@@ -59,6 +60,7 @@ public class EndTask extends GameTask {
             gp.setDisguises(null);
             gp.setFlagged(0);
 
+            gp.setXp2(0);
             Manager.getDataManager(TrollDataManager.class).addPlayerInfoInteger(gp.getUniqueID().toString(), gp.getTrollPoint(), DataEnum.DataManagerType.ADD);
             gp.setTrollPoint(0);
         }

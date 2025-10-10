@@ -1,4 +1,4 @@
-package matanku.kakurembo.menu.cosmetic;
+package matanku.kakurembo.menu.cosmetic.impl;
 
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.menu.Button;
@@ -8,7 +8,6 @@ import matanku.kakurembo.config.Messages;
 import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.config.datamanager.impl.CosmeticDataManager;
 import matanku.kakurembo.enums.GameRole;
-import matanku.kakurembo.game.Game;
 import matanku.kakurembo.player.GamePlayer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -27,7 +26,6 @@ public class KillMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
-        final Game game = HideAndSeek.Instance.getGame();
 
         for (Messages.Message gs : Messages.Message.values()) {
             buttons.put(buttons.size(), new Button() {

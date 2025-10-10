@@ -69,11 +69,10 @@ public final class HideAndSeek extends JavaPlugin {
 
                         if (!game.isStarted()) {
                             if (!gp.isParkour()) {
-                                gp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,Integer.MAX_VALUE,1, true, true));
+                                gp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,Integer.MAX_VALUE,1, false, false));
                             } else gp.getPlayer().removePotionEffect(PotionEffectType.SPEED);
 
                             gp.onTickParkour();
-                            gp.getPlayer().getInventory().setItem(1, Items.COSMETIC.getItem());
                         }
                     }
                 }

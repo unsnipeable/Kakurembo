@@ -2,6 +2,7 @@ package matanku.kakurembo.menu.cosmetic;
 
 import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
+import matanku.kakurembo.menu.cosmetic.impl.KillMenu;
 import matanku.kakurembo.util.Common;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

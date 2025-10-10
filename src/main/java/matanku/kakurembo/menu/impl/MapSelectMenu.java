@@ -45,10 +45,8 @@ public class MapSelectMenu extends Menu {
 
                 @Override
                 public void clicked(Player player, ClickType clickType) {
-                    if (mapsSelection.contains(file.getName())) {
-                        game.getSettings().setMap(file.getName());
-                        backMenu.openMenu(player);
-                    }
+                    game.getSettings().setMap(file.getName());
+                    backMenu.openMenu(player);
                 }
             });
         }

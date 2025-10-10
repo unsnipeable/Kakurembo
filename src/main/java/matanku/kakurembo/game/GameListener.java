@@ -91,6 +91,7 @@ public class GameListener implements Listener {
                 }
             }
         }
+        player.getInventory().setItem(1, Items.COSMETIC.getItem());
 
         PlayerUtil.reset(player);
         if (!game.isStarted()) {
@@ -279,7 +280,7 @@ public class GameListener implements Listener {
 
 
         game.getGamePlayer(event.getAttacker()).addXp(80);
-        Common.sendMessage(gamePlayer.getPlayer(), "<gold>+80 経験値! (プレイヤーキル)");
+        Common.sendMessage(event.getAttacker(), "<gold>+80 経験値! (プレイヤーキル)");
 
         // Common.sendMessage(player, "", "<yellow>あなたは " + GameRole.SEEKER.getColoredName() + "<yellow> に見つかってしまったため、 " + gamePlayer.getRole().getColoredName() + "<yellow> になりました！");
 
@@ -456,7 +457,6 @@ public class GameListener implements Listener {
                         }
 
                         gamePlayer.getDisguises().getDisguise().stopDisguise();
-                        gamePlayer.getDisguises().setType(DisguiseTypes.BLOCK);
                         gamePlayer.getDisguises().setData(block.getType().name());
                         gamePlayer.getDisguises().setDisguise(Util.disguise(player));
                         Common.sendMessage(player, "<yellow>あなたは <aqua>" + block.getType().name() + "<yellow> に変身しました！");
@@ -612,7 +612,6 @@ public class GameListener implements Listener {
 
         for (Menu menu : Registers.menus) {
             if (!menu.getClass().equals(gp.getMenu().getClass())) continue;
-
             for (Button btn : menu.getButtons(p).values()) {
                 if (btn.getButtonItem(p).isSimilar(item) && !HideAndSeek.Instance.getGame().isStarted()) {
                     clicked(btn, p, click);

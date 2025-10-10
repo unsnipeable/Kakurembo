@@ -52,7 +52,7 @@ public class PlaceHolderAPIUtil extends PlaceholderExpansion {
             return plugin.getGame().isStarted() + "";
         }
         if (params.equalsIgnoreCase("players")) {
-            return plugin.getGame().getPlayers().size() + "";
+            return plugin.getGame().getPlayers().size()-1 + "";
         }
         if (params.equalsIgnoreCase("map")) {
             return plugin.getGame().getMap().getName();
@@ -77,6 +77,9 @@ public class PlaceHolderAPIUtil extends PlaceholderExpansion {
         }
         if (params.equalsIgnoreCase("troll")) {
             return (Math.max(plugin.getGame().getGamePlayer(player).getTrollPoint(), 0)) + "";
+        }
+        if (params.equalsIgnoreCase("coin")) {
+            return (Math.max(plugin.getGame().getGamePlayer(player).getCoin(), 0)) + "";
         }
         if (params.equalsIgnoreCase("star")) {
             return plugin.getGame().getGamePlayer(player).getPrestigeFormatWithoutBracket();

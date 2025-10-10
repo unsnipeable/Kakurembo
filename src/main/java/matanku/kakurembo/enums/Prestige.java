@@ -22,8 +22,11 @@ public enum Prestige {
     RAINBOW(100, "&c[&6%1%&e%2%&a%3%&b✫&d]"),
 
     //original
-    SHADOW(110, "&7[&f%star%&7]"),
-    SUN(120, "&4[&c%star%&4]")
+    SHADOW(110, "&7[&f%star%✡&7]"),
+    SUN(120, "&4[&c%star%✡&4]"),
+    LEAVES(130, "&2[&a%star%✡&2]"),
+    LIGHTNING(140, "&f[&e%star%✡&f]"),
+    UNIVERSE(150, "&d[&5%1%%2%&9%3%✡&1]")
     ;
 
     private final int star;

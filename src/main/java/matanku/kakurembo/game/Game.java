@@ -5,7 +5,6 @@ import lombok.Setter;
 import matanku.kakurembo.config.Config;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.util.*;
-import matanku.kakurembo.enums.DisguiseTypes;
 import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.enums.GameState;
 import matanku.kakurembo.game.disguise.DisguiseData;
@@ -105,11 +104,9 @@ public class Game {
             Player player = gamePlayer.getPlayer();
             GameRole role = gamePlayer.getRole();
 
-            if (getSettings().getSpeed() >= 1) player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, getSettings().getSpeed(),false,false));
-            
             if (role == GameRole.HIDER) {
                 map.teleport(player);
-                gamePlayer.setDisguises(new DisguiseData(DisguiseTypes.BLOCK, "OAK_PLANKS"));
+                gamePlayer.setDisguises(new DisguiseData( "OAK_PLANKS"));
                 gamePlayer.getDisguises().setDisguise(Util.disguise(player));
                 player.getInventory().setContents(role.getTools());
             }
@@ -126,6 +123,10 @@ public class Game {
         for (GamePlayer gamePlayer : players.values()) {
             Player player = gamePlayer.getPlayer();
             GameRole role = gamePlayer.getRole();
+
+
+            player.removePotionEffect(PotionEffectType.SPEED);
+            if (getSettings().getSpeed() >= 1) player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, getSettings().getSpeed(),false,false));
 
             if (role == GameRole.SEEKER) {
                 map.teleport(player);

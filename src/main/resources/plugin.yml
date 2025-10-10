@@ -5,6 +5,7 @@ api-version: 1.21
 author: matanku
 commands:
   settings:
+    permission: gameadmin
   hideandseek:
     aliases: [has]
 permissions:
