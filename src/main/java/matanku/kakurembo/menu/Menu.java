@@ -43,12 +43,14 @@ public class Menu {
     }
 
     public void reloadMenu(Player player) {
+        player.getOpenInventory().getTopInventory().clear();
         if (this.getButtons(player) != null) {
             this.getButtons(player).forEach((k, v) -> {
                 v.guiSlot = k;
-                gui.setItem(k, v.getButtonItem(player));
+                player.getOpenInventory().getTopInventory().setItem(k, v.getButtonItem(player));
             });
         }
+        this.gui = player.getOpenInventory().getTopInventory();
     }
 
 

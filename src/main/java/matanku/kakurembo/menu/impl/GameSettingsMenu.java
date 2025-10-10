@@ -418,7 +418,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new MapSelectMenu(GameSettingsMenu.this).reloadMenu(player);
+                new MapSelectMenu(GameSettingsMenu.this).openMenu(player);
             }
         });
         buttons.put(24, new Button() {
@@ -437,7 +437,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new TimeSetMenu().reloadMenu(player);
+                new TimeSetMenu().openMenu(player);
             }
         });
 
@@ -459,7 +459,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new RoleSelectAdminMenu().reloadMenu(player);
+                new RoleSelectAdminMenu().openMenu(player);
             }
         });
         buttons.put(26, new Button() {
@@ -483,7 +483,7 @@ public class GameSettingsMenu extends Menu {
 
                 if (HideAndSeek.Instance.getGame().getSettings().getMap() == null) {
                     Common.sendMessage(player, "<red>カウントダウンを開始しようとしたときにエラーが発生しました: マップがまだ選択されていません!");
-                    new MapSelectMenu(new GameSettingsMenu()).reloadMenu(player);
+                    new MapSelectMenu(new GameSettingsMenu()).openMenu(player);
                     return;
                 }
 
