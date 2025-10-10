@@ -76,6 +76,9 @@ public class PlaceHolderAPIUtil extends PlaceholderExpansion {
             return plugin.getGame().getGamePlayer(player).getParkourStatus().i + "";
         }
         if (params.equalsIgnoreCase("troll")) {
+            return (Math.max(plugin.getGame().getGamePlayer(player).getTrollPointGame(), 0)) + "";
+        }
+        if (params.equalsIgnoreCase("trollAny")) {
             return (Math.max(plugin.getGame().getGamePlayer(player).getTrollPoint(), 0)) + "";
         }
         if (params.equalsIgnoreCase("coin")) {

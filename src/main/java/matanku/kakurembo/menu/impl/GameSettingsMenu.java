@@ -62,7 +62,7 @@ public class GameSettingsMenu extends Menu {
                         entry.getValue().setRole(GameRole.NONE);
                     }
                 }
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -111,7 +111,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 super.clicked(player, clickType);
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -140,7 +140,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 game.getSettings().setAllowJoinAsSeekerAfterStarted(!game.getSettings().isAllowJoinAsSeekerAfterStarted());
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -174,7 +174,7 @@ public class GameSettingsMenu extends Menu {
                     Common.broadcastMessage("<gray>[<yellow>!<gray>]<white>管理者により横の当たり判定が完全でないブロックに変身することが<red>禁止<white>されました!");
 
                 }
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -202,7 +202,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 game.getSettings().setAntiCheatEnabled(!isEnabled(player));
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -251,7 +251,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 super.clicked(player, clickType);
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -279,7 +279,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 game.getSettings().setHeartBeatEnabled(!isEnabled(player));
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -310,7 +310,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 game.getSettings().setTrackerEnabled(!isEnabled(player));
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -330,7 +330,7 @@ public class GameSettingsMenu extends Menu {
                         game.getSettings().setSwordFire(!game.getSettings().isSwordFire());
                         break;
                 }
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -358,7 +358,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 game.getSettings().setInstaKill(!isEnabled(player));
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -406,7 +406,7 @@ public class GameSettingsMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 super.clicked(player, clickType);
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -418,7 +418,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new MapSelectMenu(GameSettingsMenu.this).openMenu(player);
+                new MapSelectMenu(GameSettingsMenu.this).reloadMenu(player);
             }
         });
         buttons.put(24, new Button() {
@@ -437,7 +437,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new TimeSetMenu().openMenu(player);
+                new TimeSetMenu().reloadMenu(player);
             }
         });
 
@@ -459,7 +459,7 @@ public class GameSettingsMenu extends Menu {
 
             @Override
             public void clicked(Player player, ClickType clickType) {
-                new RoleSelectAdminMenu().openMenu(player);
+                new RoleSelectAdminMenu().reloadMenu(player);
             }
         });
         buttons.put(26, new Button() {
@@ -483,7 +483,7 @@ public class GameSettingsMenu extends Menu {
 
                 if (HideAndSeek.Instance.getGame().getSettings().getMap() == null) {
                     Common.sendMessage(player, "<red>カウントダウンを開始しようとしたときにエラーが発生しました: マップがまだ選択されていません!");
-                    new MapSelectMenu(new GameSettingsMenu()).openMenu(player);
+                    new MapSelectMenu(new GameSettingsMenu()).reloadMenu(player);
                     return;
                 }
 

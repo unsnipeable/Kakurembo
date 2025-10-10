@@ -71,7 +71,7 @@ public class TimeSetMenu extends Menu {
                 @Override
                 public void clicked(Player player, ClickType clickType) {
                     super.clicked(player, clickType);
-                    openMenu(player);
+                    reloadMenu(player);
                 }
             });
         }

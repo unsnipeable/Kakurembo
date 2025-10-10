@@ -44,6 +44,7 @@ public class GamePlayer {
     public List<Messages.Message> unlockedKillMessage = new ArrayList<>(Arrays.stream(Messages.Message.values()).filter(Messages.Message::isUnlockedAsDefault).toList());
     private Messages.Message selectedKillMessage = Messages.Message.DEFAULT;
     private int coin;
+    private int trollPointGame = 0;
     private int trollPoint = 0;
     private int glowingHintCooldown = 0;
 

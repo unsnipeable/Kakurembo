@@ -15,17 +15,14 @@ import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
-import matanku.kakurembo.menu.Registers;
+import matanku.kakurembo.menu.MenuManager;
 import matanku.kakurembo.menu.button.IntegerButton;
 import matanku.kakurembo.menu.button.ToggleButton;
 import matanku.kakurembo.util.Common;
 import matanku.kakurembo.util.Util;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.block.sign.Side;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -45,12 +42,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.event.GamePlayerDeathEvent;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 import java.util.*;
 
@@ -222,7 +216,7 @@ public class GameListener implements Listener {
             GamePlayer gameDamager = game.getGamePlayer(damager);
 
             if (gameDamager.getRole() == GameRole.HIDER && gameEntity.getRole() == GameRole.SEEKER && event.getDamage() != 0.0) {
-                gameDamager.setTrollPoint(gameDamager.getTrollPoint()+1);
+                gameDamager.setTrollPointGame(gameDamager.getTrollPointGame()+1);
                 Common.sendMessage(gameDamager.getPlayer(), "<red>+1 トロールポイント! (シーカーを攻撃)");
             }
 
@@ -486,7 +480,7 @@ public class GameListener implements Listener {
                     } else if (itemStack.equals(Items.GLOWING_HINT.getItem())) {
                         if (gamePlayer.getGlowingHintCooldown() <= 0) {
                             if (gamePlayer.getRole() == GameRole.HIDER) {
-                                gamePlayer.setTrollPoint(gamePlayer.getTrollPoint()+10);
+                                gamePlayer.setTrollPointGame(gamePlayer.getTrollPointGame()+10);
                                 Common.sendMessage(gamePlayer.getPlayer(), "<red>+10 トロールポイント! (発光ヒント)");
                                 gamePlayer.setGlowingHintCooldown(20);
                                 gamePlayer.addXp(50);
@@ -610,7 +604,7 @@ public class GameListener implements Listener {
         GamePlayer gp = HideAndSeek.getGamePlayerByPlayer(p);
         ClickType click = e.getClick();
 
-        for (Menu menu : Registers.menus) {
+        for (Menu menu : MenuManager.menus) {
             if (!menu.getClass().equals(gp.getMenu().getClass())) continue;
             for (Button btn : menu.getButtons(p).values()) {
                 if (btn.getButtonItem(p).isSimilar(item) && !HideAndSeek.Instance.getGame().isStarted()) {

@@ -16,8 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-public abstract class DataManager implements IDataManager {
-
+public abstract class DataManager {
     private Hologram hologram;
     private File dataFile;
     @Getter
@@ -141,4 +140,10 @@ public abstract class DataManager implements IDataManager {
     // ====== サブクラスで実装必須 ======
     public abstract void setVariable(String playerName, Integer i);
     public abstract void setVariable(String playerName, String s);
+
+    public abstract String configName();
+    public abstract Location loc();
+    public abstract String name();
+    public abstract String calc(double d);
+    public abstract DataEnum.DataType type();
 }

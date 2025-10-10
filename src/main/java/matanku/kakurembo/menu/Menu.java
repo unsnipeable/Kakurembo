@@ -17,7 +17,7 @@ public class Menu {
     }
 
     public void register() {
-        Registers.menus.add(this);
+        MenuManager.menus.add(this);
     }
 
 
@@ -39,8 +39,16 @@ public class Menu {
         player.closeInventory();
         player.openInventory(gui);
 
-        GamePlayer gamePlayer = HideAndSeek.getInstance().getGame().getGamePlayer(player);
-        gamePlayer.setMenu(this);
+        HideAndSeek.getInstance().getGame().getGamePlayer(player).setMenu(this);
+    }
+
+    public void reloadMenu(Player player) {
+        if (this.getButtons(player) != null) {
+            this.getButtons(player).forEach((k, v) -> {
+                v.guiSlot = k;
+                gui.setItem(k, v.getButtonItem(player));
+            });
+        }
     }
 
 

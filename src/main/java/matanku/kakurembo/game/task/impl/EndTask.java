@@ -34,7 +34,7 @@ public class EndTask extends GameTask {
 
     @Override
     public void preRun() {
-        List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPoint).reversed()).limit(3).toList();
+        List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPointGame).reversed()).limit(3).toList();
 
         for (GamePlayer gp : game.getPlayers().values()) {
             gp.addXp(400);
@@ -51,7 +51,7 @@ public class EndTask extends GameTask {
                     (top3.size() > 1 ? "<white>|  <gray>2位: <gold>" + top3.get(1).getPlayer().getName() + " (" + (top3.get(1).getTrollPoint() == 0 ? "なし" : top3.get(1).getTrollPoint()) + ")" : "<white>|  <light_gray>2位: なし"),
                     (top3.size() > 2 ? "<white>|  <dark_red>3位: <gold>" + top3.get(2).getPlayer().getName() + " (" + (top3.get(2).getTrollPoint() == 0 ? "なし" : top3.get(2).getTrollPoint()) + ")" : "<white>|  <dark_red>3位: なし"),
                     "",
-                    "<red>トロールポイント: <bold>" + gp.getTrollPoint(),
+                    "<red>今回手に入れたトロールポイント: <bold>" + gp.getTrollPointGame(),
                     "<gold>今回手に入れた経験値: <bold>" + gp.getXp2(),
                     "",
                     "<gray><strikethrough>                                            <!strikethrough>",
@@ -61,8 +61,9 @@ public class EndTask extends GameTask {
             gp.setFlagged(0);
 
             gp.setXp2(0);
-            Manager.getDataManager(TrollDataManager.class).addPlayerInfoInteger(gp.getUniqueID().toString(), gp.getTrollPoint(), DataEnum.DataManagerType.ADD);
-            gp.setTrollPoint(0);
+            Manager.getDataManager(TrollDataManager.class).addPlayerInfoInteger(gp.getUniqueID().toString(), gp.getTrollPointGame(), DataEnum.DataManagerType.ADD);
+            gp.setTrollPointGame(0);
+            gp.setTrollPoint(gp.getTrollPoint() + gp.getTrollPointGame());
         }
 
         game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);

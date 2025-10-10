@@ -38,7 +38,7 @@ public class RoleSelectMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 selectRole(gamePlayer, GameRole.HIDER);
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 
@@ -51,7 +51,7 @@ public class RoleSelectMenu extends Menu {
             @Override
             public void clicked(Player player, ClickType clickType) {
                 selectRole(gamePlayer, GameRole.SEEKER);
-                openMenu(player);
+                reloadMenu(player);
             }
         });
 

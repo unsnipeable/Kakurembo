@@ -48,11 +48,11 @@ public class RoleSelectAdminMenu extends Menu {
 
                     if (index + 1 == maxIndex) {
                         gamePlayer.setRole(GameRole.values()[0]);
-                        openMenu(player);
+                        reloadMenu(player);
                         return;
                     }
                     gamePlayer.setRole(GameRole.values()[index + 1]);
-                    openMenu(player);
+                    reloadMenu(player);
                 }
             });
         }

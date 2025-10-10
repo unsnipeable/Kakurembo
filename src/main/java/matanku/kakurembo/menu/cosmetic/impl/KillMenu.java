@@ -81,7 +81,7 @@ public class KillMenu extends Menu {
                         u.append(gamePlayer.unlockedKillMessage.contains(msg) ? "T" : "F");
                     }
                     Manager.getDataManager(CosmeticDataManager.class).addPlayerInfoString(player.getName(), u.toString());
-                    openMenu(player);
+                    reloadMenu(player);
                 }
             });
         }
