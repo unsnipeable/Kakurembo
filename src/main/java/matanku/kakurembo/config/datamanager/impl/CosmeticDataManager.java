@@ -3,8 +3,7 @@ package matanku.kakurembo.config.datamanager.impl;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.config.Messages;
 import matanku.kakurembo.config.datamanager.DataManager;
-import matanku.kakurembo.enums.DataEnum;
-import org.bukkit.Bukkit;
+import matanku.kakurembo.util.enums.DataEnum;
 import org.bukkit.Location;
 
 import java.util.ArrayList;

@@ -8,14 +8,16 @@ import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.config.datamanager.impl.CoinDataManager;
 import matanku.kakurembo.config.datamanager.impl.StarDataManager;
 import matanku.kakurembo.config.datamanager.impl.StarProgressDataManager;
+import matanku.kakurembo.game.enums.GameRole;
+import matanku.kakurembo.util.enums.CheckPointStatus;
+import matanku.kakurembo.util.enums.DataEnum;
+import matanku.kakurembo.util.enums.Prestige;
 import matanku.kakurembo.menu.Menu;
-import matanku.kakurembo.enums.CheckPointStatus;
-import matanku.kakurembo.enums.DataEnum;
-import matanku.kakurembo.enums.Prestige;
+import matanku.kakurembo.util.Common;
+import matanku.kakurembo.util.enums.RankEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import matanku.kakurembo.enums.GameRole;
 import matanku.kakurembo.game.disguise.DisguiseData;
 
 import java.util.ArrayList;
@@ -61,13 +63,31 @@ public class GamePlayer {
     private Location checkPoint = null;
     private CheckPointStatus parkourStatus = CheckPointStatus.NOTPLAYING;
 
+    private RankEnum rank = RankEnum.NON;
+
+    public void setRank(RankEnum rank) {
+        this.rank = rank;
+    }
+
+    public void setRank(int rank) {
+        for (RankEnum r : RankEnum.values()) {
+            if (r.getWeight() == rank) {
+                this.rank = r;
+            }
+        }
+    }
+
+    public String getDisplayName() {
+        return getRank().getPrefix() + getPlayer().getName();
+    }
+
     public void setParkourSpawn(Location loc) {
         Location p = loc.clone();
         p.setPitch(0f);
         parkourSpawn = p;
     }
 
-    public void addXp(int i) {
+    public void addXp(int i, String reason) {
         xp2 += i;
         int t = i + xp;
         int level = star;
@@ -79,6 +99,8 @@ public class GamePlayer {
         Manager.getDataManager(StarDataManager.class).addPlayerInfoInteger(getPlayer().getUniqueId().toString(), level, DataEnum.DataManagerType.SET);
         xp = t;
         star = level;
+
+        Common.sendMessage(getPlayer(), "<gold>+" + i + " 経験値! (" + reason + ")");
     }
 
     public void setCoin(int i) {

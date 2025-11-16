@@ -1,4 +1,4 @@
-package matanku.kakurembo.enums;
+package matanku.kakurembo.util.enums;
 
 public enum ConfigurableTimes {
     HIDING("hider_time", "隠れる時間","ハイダーが隠れ場所に行くための時間"),

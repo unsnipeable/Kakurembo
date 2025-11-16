@@ -1,4 +1,4 @@
-package matanku.kakurembo.enums;
+package matanku.kakurembo.game.enums;
 
 
 public enum GameState {

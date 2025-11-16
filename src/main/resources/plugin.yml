@@ -3,16 +3,6 @@ version: '${version}'
 main: matanku.kakurembo.HideAndSeek
 api-version: 1.21
 author: matanku
-commands:
-  settings:
-    permission: gameadmin
-  hideandseek:
-    aliases: [has]
-permissions:
-  admin:
-    description: HI
-  gameadmin:
-    description: HI
 depend:
   - DecentHolograms
   - PlaceholderAPI

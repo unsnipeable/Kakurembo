@@ -2,10 +2,9 @@ package matanku.kakurembo;
 
 import lombok.Getter;
 import lombok.Setter;
-import matanku.kakurembo.command.*;
+import matanku.kakurembo.command.ServerCommandManager;
 import matanku.kakurembo.config.datamanager.Manager;
-import matanku.kakurembo.enums.GameState;
-import matanku.kakurembo.enums.Items;
+import matanku.kakurembo.game.enums.GameState;
 import matanku.kakurembo.game.Game;
 import matanku.kakurembo.game.GameListener;
 import matanku.kakurembo.player.GamePlayer;
@@ -13,13 +12,10 @@ import matanku.kakurembo.util.BasicConfigFile;
 import matanku.kakurembo.util.Common;
 import matanku.kakurembo.util.PlaceHolderAPIUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 
@@ -36,12 +32,7 @@ public final class HideAndSeek extends JavaPlugin {
     private boolean load;
     private Game game;
 
-    @NotNull
-    public static GamePlayer getGamePlayerByPlayer(Player player) {
-        return getInstance().game.getGamePlayer(player);
-    }
     public static DecimalFormat DECIMAL = new DecimalFormat("0.##");
-
 
     @Override
     public void onEnable() {
@@ -54,9 +45,6 @@ public final class HideAndSeek extends JavaPlugin {
         game = new Game();
 
         getServer().getPluginManager().registerEvents(new GameListener(), this);
-
-        this.getCommand("hideandseek").setExecutor(new HideAndSeekCommand());
-        this.getCommand("settings").setExecutor(new SettingsCommand());
 
         new BukkitRunnable() {
             @Override
@@ -83,5 +71,7 @@ public final class HideAndSeek extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
             new PlaceHolderAPIUtil(this).register(); //
         }
+
+        ServerCommandManager.init();
     }
 }

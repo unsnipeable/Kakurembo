@@ -1,10 +1,8 @@
 package matanku.kakurembo.menu.impl;
 
-import matanku.kakurembo.enums.ConfigurableTimes;
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.util.enums.ConfigurableTimes;
 import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
-import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.menu.button.IntegerButton;
 import matanku.kakurembo.menu.button.ToggleButton;
 import matanku.kakurembo.util.Common;
@@ -22,7 +20,6 @@ import matanku.kakurembo.game.Game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class GameSettingsMenu extends Menu {
     @Override
@@ -34,38 +31,6 @@ public class GameSettingsMenu extends Menu {
     public Map<Integer, Button> getButtons(Player player) {
         final Map<Integer, Button> buttons = new HashMap<>();
         final Game game = HideAndSeek.Instance.getGame();
-
-        buttons.put(0, new ToggleButton() {
-            @Override
-            public String getOptionName() {
-                return "ロールを選択";
-            }
-
-            @Override
-            public String[] getDescription() {
-                return new String[]{"<gray>プレイヤーが/roleselectを使用して", "ハイダーかシーカーを選択できるようにすべきでしょうか?"};
-            }
-
-            @Override
-            public boolean isEnabled(Player player) {
-                return game.getSettings().isAllowPublicRoleSelect();
-            }
-
-            @Override
-            public void clicked(Player player, ClickType clickType) {
-                game.getSettings().setAllowPublicRoleSelect(!game.getSettings().isAllowPublicRoleSelect());
-                if (isEnabled(player)) {
-                    Common.broadcastMessage("<white>管理者によりロールの選択が<green>許可<white>されました！ ", "<aqua>/roleselect<white>を使用してロールを選択することができます！");
-                } else {
-                    Common.broadcastMessage("<white>管理者によりロールの選択が<red>禁止<white>されました！ ", "<white>全員のロールがリセットされました！");
-                    for (Map.Entry<UUID, GamePlayer> entry : game.getPlayers().entrySet()) {
-                        entry.getValue().setRole(GameRole.NONE);
-                    }
-                }
-                reloadMenu(player);
-            }
-        });
-
 
         buttons.put(1, new IntegerButton() {
             @Override
@@ -174,83 +139,6 @@ public class GameSettingsMenu extends Menu {
                     Common.broadcastMessage("<gray>[<yellow>!<gray>]<white>管理者により横の当たり判定が完全でないブロックに変身することが<red>禁止<white>されました!");
 
                 }
-                reloadMenu(player);
-            }
-        });
-
-        buttons.put(4, new ToggleButton() {
-            @Override
-            public String getOptionName() {
-                return "アンチチート";
-            }
-
-            @Override
-            public Material getMaterial() {
-                return Material.REDSTONE_BLOCK;
-            }
-
-            @Override
-            public String[] getDescription() {
-                return new String[]{"<gray>板ガラスをしようした壁抜け", "看板や頭ブロックによる透明化", "などのチートを無効化。"};
-            }
-
-            @Override
-            public boolean isEnabled(Player player) {
-                return game.getSettings().isAntiCheatEnabled();
-            }
-
-            @Override
-            public void clicked(Player player, ClickType clickType) {
-                game.getSettings().setAntiCheatEnabled(!isEnabled(player));
-                reloadMenu(player);
-            }
-        });
-
-        buttons.put(5, new IntegerButton() {
-            @Override
-            public Material getMaterial() {
-                return Material.STONE_SWORD;
-            }
-
-            @Override
-            public String getOptionName() {
-                return "シーカーにするアンチチートフラグ回数";
-            }
-
-
-            @Override
-            public String[] getDescription() {
-                return new String[]{"壁抜けなどを行おうとする回数がこの設定の回数を超えるとシーカーになります。", "0回にするとシーカー化を無効化します。"};
-            }
-
-            @Override
-            public String getCurrentValue() {
-                return game.getSettings().getMaxFlag() == -1 ? "<red>未設定" : game.getSettings().getMaxFlag() + "";
-            }
-
-            @Override
-            public void plus1(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 1));
-            }
-
-            @Override
-            public void plus10(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() + 10));
-            }
-
-            @Override
-            public void minus1(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 1));
-            }
-
-            @Override
-            public void minus10(Player player) {
-                game.getSettings().setMaxFlag(Math.max(0, game.getSettings().getMaxFlag() - 10));
-            }
-
-            @Override
-            public void clicked(Player player, ClickType clickType) {
-                super.clicked(player, clickType);
                 reloadMenu(player);
             }
         });

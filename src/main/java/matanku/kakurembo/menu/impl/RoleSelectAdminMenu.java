@@ -1,6 +1,6 @@
 package matanku.kakurembo.menu.impl;
 
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.game.enums.GameRole;
 import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
 import matanku.kakurembo.player.GamePlayer;

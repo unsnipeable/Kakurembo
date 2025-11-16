@@ -7,7 +7,7 @@ import matanku.kakurembo.util.Common;
 import matanku.kakurembo.config.Messages;
 import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.config.datamanager.impl.CosmeticDataManager;
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.game.enums.GameRole;
 import matanku.kakurembo.player.GamePlayer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

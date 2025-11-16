@@ -2,7 +2,7 @@ package matanku.kakurembo.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.game.enums.GameRole;
 import matanku.kakurembo.player.GamePlayer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

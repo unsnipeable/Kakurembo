@@ -1,14 +1,8 @@
 package matanku.kakurembo.util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.UUID;
+import matanku.kakurembo.util.enums.RankEnum;
 
 public class Checker {
-
-
     public static boolean isInteger(String index) {
         try {
             Integer.parseInt(index);
@@ -18,9 +12,16 @@ public class Checker {
         }
     }
 
-
     public static boolean isBoolean(String index) {
         return index.equals("true") || index.equals("false");
     }
 
+    public static boolean isRank(String index) {
+        try {
+            RankEnum rank = RankEnum.valueOf(index);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
 }

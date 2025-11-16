@@ -4,7 +4,7 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import lombok.Getter;
 import matanku.kakurembo.HideAndSeek;
-import matanku.kakurembo.enums.DataEnum;
+import matanku.kakurembo.util.enums.DataEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;

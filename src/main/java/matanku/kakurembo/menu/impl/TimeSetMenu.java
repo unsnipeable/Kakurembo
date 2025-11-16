@@ -5,7 +5,7 @@ import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
 import matanku.kakurembo.menu.button.IntegerButton;
 import matanku.kakurembo.util.Common;
-import matanku.kakurembo.enums.ConfigurableTimes;
+import matanku.kakurembo.util.enums.ConfigurableTimes;
 import matanku.kakurembo.game.Game;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

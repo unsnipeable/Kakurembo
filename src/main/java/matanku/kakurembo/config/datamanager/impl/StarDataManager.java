@@ -2,7 +2,7 @@ package matanku.kakurembo.config.datamanager.impl;
 
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.config.datamanager.DataManager;
-import matanku.kakurembo.enums.DataEnum;
+import matanku.kakurembo.util.enums.DataEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

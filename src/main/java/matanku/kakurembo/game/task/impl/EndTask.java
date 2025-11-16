@@ -1,10 +1,9 @@
 package matanku.kakurembo.game.task.impl;
 
 import matanku.kakurembo.config.datamanager.Manager;
-import matanku.kakurembo.config.datamanager.impl.StarDataManager;
 import matanku.kakurembo.config.datamanager.impl.TrollDataManager;
-import matanku.kakurembo.enums.DataEnum;
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.util.enums.DataEnum;
+import matanku.kakurembo.game.enums.GameRole;
 import matanku.kakurembo.game.task.GameTask;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.util.Common;
@@ -16,7 +15,6 @@ import org.bukkit.entity.Entity;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EndTask extends GameTask {
 
@@ -37,8 +35,7 @@ public class EndTask extends GameTask {
         List<GamePlayer> top3 = game.getPlayers().values().stream().sorted(Comparator.comparingInt(GamePlayer::getTrollPointGame).reversed()).limit(3).toList();
 
         for (GamePlayer gp : game.getPlayers().values()) {
-            gp.addXp(400);
-            Common.sendMessage(gp.getPlayer(), "<gold>+400 経験値! (プレイ)");
+            gp.addXp(400, "プレイ");
 
             Common.sendMessage(gp.getPlayer(),
                     "",
@@ -62,8 +59,8 @@ public class EndTask extends GameTask {
 
             gp.setXp2(0);
             Manager.getDataManager(TrollDataManager.class).addPlayerInfoInteger(gp.getUniqueID().toString(), gp.getTrollPointGame(), DataEnum.DataManagerType.ADD);
-            gp.setTrollPointGame(0);
             gp.setTrollPoint(gp.getTrollPoint() + gp.getTrollPointGame());
+            gp.setTrollPointGame(0);
         }
 
         game.getBossBar().name("<green><bold>GAME OVER! <!bold>" + winner.getColoredName() + "<green>の勝利!").color(BossBar.Color.GREEN).progress(1);

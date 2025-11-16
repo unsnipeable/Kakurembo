@@ -3,32 +3,31 @@ package matanku.kakurembo.config.datamanager.impl;
 import matanku.kakurembo.HideAndSeek;
 import matanku.kakurembo.config.datamanager.DataManager;
 import matanku.kakurembo.util.enums.DataEnum;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
-public class TrollDataManager extends DataManager {
+public class RankDataManager extends DataManager {
     @Override
     public String configName() {
-        return "troll";
+        return "rank";
     }
 
     @Override
     public Location loc() {
-        return new Location(Bukkit.getWorld("world"), 7.0,-59,-6.0);
+        return null;
     }
-
 
     @Override
     public String name() {
-        return "Troll Point";
+        return "Rank";
     }
 
     @Override
     public String calc(double d) {
         return (int)d + "";
     }
+
 
     @Override
     public DataEnum.DataType type() {
@@ -37,7 +36,7 @@ public class TrollDataManager extends DataManager {
 
     @Override
     public void setVariable(String playerName, Integer i) {
-        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setTrollPoint(i);
+        HideAndSeek.getInstance().getGame().getGamePlayer(UUID.fromString(playerName)).setRank(i);
     }
 
     @Override

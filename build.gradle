@@ -7,6 +7,11 @@ group = 'matanku'
 version = '1.0-SNAPSHOT'
 
 repositories {
+
+    maven {
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+
     mavenCentral()
     maven { url "https://jitpack.io" }
     maven {
@@ -15,10 +20,6 @@ repositories {
     }
     maven {
         url = 'https://repo.extendedclip.com/releases/'
-    }
-
-    maven {
-        url = "https://repo.papermc.io/repository/maven-public/"
     }
 }
 

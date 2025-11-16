@@ -14,6 +14,4 @@ public abstract class GameTask extends TaskTicker {
     }
 
     public final Game game = HideAndSeek.Instance.getGame();
-
-
 }

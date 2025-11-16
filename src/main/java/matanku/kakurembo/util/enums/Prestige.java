@@ -1,8 +1,7 @@
-package matanku.kakurembo.enums;
+package matanku.kakurembo.util.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import matanku.kakurembo.player.GamePlayer;
 
 @Getter
 @RequiredArgsConstructor

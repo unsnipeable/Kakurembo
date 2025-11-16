@@ -1,15 +1,12 @@
 package matanku.kakurembo.util;
 
 import matanku.kakurembo.HideAndSeek;
-import matanku.kakurembo.enums.GameRole;
-import matanku.kakurembo.player.GamePlayer;
+import matanku.kakurembo.game.enums.GameRole;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
-import java.util.stream.Collectors;
 
 public class PlaceHolderAPIUtil extends PlaceholderExpansion {
 

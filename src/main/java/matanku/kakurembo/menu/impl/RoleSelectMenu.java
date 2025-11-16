@@ -1,6 +1,6 @@
 package matanku.kakurembo.menu.impl;
 
-import matanku.kakurembo.enums.GameRole;
+import matanku.kakurembo.game.enums.GameRole;
 import matanku.kakurembo.game.Game;
 import matanku.kakurembo.menu.Button;
 import matanku.kakurembo.menu.Menu;
@@ -63,10 +63,6 @@ public class RoleSelectMenu extends Menu {
         Player player = gamePlayer.getPlayer();
         if (game.isStarted()) {
             Common.sendMessage(player, "<red>ゲーム開始後に自分の役職を設定することはできません");
-            return;
-        }
-        if (!game.getSettings().isAllowPublicRoleSelect()) {
-            Common.sendMessage(player, "<red>ホストがオープンチーム選択を有効にしていないため、役職を選択できません");
             return;
         }
         gamePlayer.setRole(role);

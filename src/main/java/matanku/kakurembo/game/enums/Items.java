@@ -1,4 +1,4 @@
-package matanku.kakurembo.enums;
+package matanku.kakurembo.game.enums;
 
 import lombok.RequiredArgsConstructor;
 import matanku.kakurembo.util.ItemBuilder;
@@ -20,7 +20,6 @@ public enum Items {
 
     // 2.0
     GLOWING_HINT(new ItemBuilder(Material.TORCH).name("<yellow>発光ヒント").lore("<green>右クリックで発光を10秒間付与します。", "<gray>トロールポイント: <dark_aqua>10ポイント", "<gray>クールダウン: <gold>20秒").build()),
-    COSMETIC(new ItemBuilder(Material.EMERALD).name("<green>コスメティックス").lore("<green>右クリックで開く").build())
     ;
 
     private final ItemStack item;

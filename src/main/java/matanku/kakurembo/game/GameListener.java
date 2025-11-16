@@ -2,15 +2,17 @@ package matanku.kakurembo.game;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import matanku.kakurembo.config.Config;
-import matanku.kakurembo.enums.Items;
+import matanku.kakurembo.game.enums.GameRole;
+import matanku.kakurembo.game.enums.GameState;
+import matanku.kakurembo.game.enums.Items;
+import matanku.kakurembo.util.enums.CheckPointStatus;
+import matanku.kakurembo.util.enums.DataEnum;
 import matanku.kakurembo.util.ItemBuilder;
 import matanku.kakurembo.config.Messages;
 import matanku.kakurembo.config.datamanager.DataManager;
 import matanku.kakurembo.config.datamanager.Manager;
 import matanku.kakurembo.config.datamanager.impl.ParkourDataManager;
-import matanku.kakurembo.enums.*;
 import matanku.kakurembo.game.task.impl.SeekerPhaseTask;
-import matanku.kakurembo.menu.cosmetic.CosmeticMenu;
 import matanku.kakurembo.player.GamePlayer;
 import matanku.kakurembo.util.PlayerUtil;
 import matanku.kakurembo.menu.Button;
@@ -30,7 +32,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -85,7 +86,6 @@ public class GameListener implements Listener {
                 }
             }
         }
-        player.getInventory().setItem(1, Items.COSMETIC.getItem());
 
         PlayerUtil.reset(player);
         if (!game.isStarted()) {
@@ -119,8 +119,8 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.Instance.getGame();
 
         game.getPlayers().remove(player.getUniqueId());
-        if (HideAndSeek.getGamePlayerByPlayer(player) != null) {
-            HideAndSeek.getGamePlayerByPlayer(player).setDisguises(null);
+        if (HideAndSeek.getInstance().getGame().getGamePlayer(player) != null) {
+            HideAndSeek.getInstance().getGame().getGamePlayer(player).setDisguises(null);
         }
 
         for (World w : Bukkit.getWorlds()) {
@@ -273,11 +273,7 @@ public class GameListener implements Listener {
         }
 
 
-        game.getGamePlayer(event.getAttacker()).addXp(80);
-        Common.sendMessage(event.getAttacker(), "<gold>+80 経験値! (プレイヤーキル)");
-
-        // Common.sendMessage(player, "", "<yellow>あなたは " + GameRole.SEEKER.getColoredName() + "<yellow> に見つかってしまったため、 " + gamePlayer.getRole().getColoredName() + "<yellow> になりました！");
-
+        game.getGamePlayer(event.getAttacker()).addXp(80, "プレイヤーキル");
         Common.sendMessage(player, "<yellow>勝利条件: <dark_aqua>" + gamePlayer.getRole().getGoal());
         player.setHealth(20.0D);
         if (game.canEnd()) {
@@ -285,16 +281,6 @@ public class GameListener implements Listener {
         }
     }
 
-
-    @EventHandler
-    public void onSignChange(SignChangeEvent e) {
-        if (HideAndSeek.getInstance().getGame().getGamePlayer(e.getPlayer()).isEnableBuild()) {
-            if (LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(e.line(0))).equalsIgnoreCase("[gamble]")) {
-                e.line(0, Common.text("<gold><bold>[SLOT]"));
-                e.line(3, Common.text("<green><b><u>CLICK TO PLAY<!u><!b>"));
-            }
-        }
-    }
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
@@ -389,11 +375,6 @@ public class GameListener implements Listener {
         Game game = HideAndSeek.Instance.getGame();
         GamePlayer gamePlayer = game.getGamePlayer(player);
 
-        if (Items.COSMETIC.getItem().equals(itemStack)) {
-            new CosmeticMenu().openMenu(player);
-            event.setCancelled(true);
-            return;
-        }
         if (Items.PARKOUR_CHECKPOINT.getItem().equals(itemStack)) {
             if (gamePlayer.isParkour()) {
                 player.teleport(gamePlayer.getCheckPoint());
@@ -440,13 +421,11 @@ public class GameListener implements Listener {
                             return;
                         }
 
-                        if (game.getSettings().isAntiCheatEnabled()) {
-                            String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER", "SKULL", "DECORATED"};
-                            for (String string : disallowedBlocks) {
-                                if (block.getType().name().toUpperCase().contains(string)) {
-                                    Common.sendMessage(player, "<red>あなたが変身しようとしたブロックは禁止されているブロックです！");
-                                    return;
-                                }
+                        String[] disallowedBlocks = new String[]{"SIGN", "BUTTON", "DOOR", "LADDER", "HEAD", "BANNER", "SKULL", "DECORATED"};
+                        for (String string : disallowedBlocks) {
+                            if (block.getType().name().toUpperCase().contains(string)) {
+                                Common.sendMessage(player, "<red>あなたが変身しようとしたブロックは禁止されているブロックです！");
+                                return;
                             }
                         }
 
@@ -466,13 +445,13 @@ public class GameListener implements Listener {
 
                         for (String string : disallowedBlocks) {
                             if (blockLoc2.getBlock().getType().name().toUpperCase().contains(string)) {
-                                flag(gamePlayer, blockLocSetBack, game, player);
+                                flag(gamePlayer, blockLocSetBack);
                                 return;
                             }
                         }
                         for (String string : disallowedBlocks2) {
                             if (blockLoc.getBlock().getType().name().toUpperCase().contains(string)) {
-                                flag(gamePlayer, blockLocSetBack, game, player);
+                                flag(gamePlayer, blockLocSetBack);
                                 return;
                             }
                         }
@@ -483,8 +462,7 @@ public class GameListener implements Listener {
                                 gamePlayer.setTrollPointGame(gamePlayer.getTrollPointGame()+10);
                                 Common.sendMessage(gamePlayer.getPlayer(), "<red>+10 トロールポイント! (発光ヒント)");
                                 gamePlayer.setGlowingHintCooldown(20);
-                                gamePlayer.addXp(50);
-                                Common.sendMessage(gamePlayer.getPlayer(), "<gold>+50 経験値! (発光ヒント)");
+                                gamePlayer.addXp(50, "発光ヒント");
                             }
                         } else {
                             Common.sendMessage(gamePlayer.getPlayer(),"<red>あなたの発光ヒントはクールダウン中です!\n" + gamePlayer.getGlowingHintCooldown() + " 秒後にお試しください!");
@@ -495,23 +473,8 @@ public class GameListener implements Listener {
         }
     }
 
-    public void flag(GamePlayer gamePlayer, Location blockLocSetBack, Game game, Player player) {
-        if (!game.getSettings().isAntiCheatEnabled()) return;
+    public void flag(GamePlayer gamePlayer, Location blockLocSetBack) {
         gamePlayer.getPlayer().teleport(blockLocSetBack);
-        if (game.getSettings().getMaxFlag() >= 0) {
-            return;
-        }
-        gamePlayer.setFlagged(gamePlayer.getFlagged()+1);
-        if (gamePlayer.getFlagged() >= game.getSettings().getMaxFlag()) {
-            gamePlayer.getDisguises().getDisguise().stopDisguise();
-            gamePlayer.setRole(GameRole.SEEKER);
-            game.getMap().teleport(player);
-            player.getInventory().addItem(new ItemBuilder(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getItem()).name(HideAndSeek.getInstance().getGame().getSettings().getSwordType().getName()).unbreakable().enchantmentBoolean(Enchantment.FIRE_ASPECT, 1,game.getSettings().isSwordFire()).build(true));
-            Common.broadcastMessage("<dark_purple><bold>ANTI CHEAT! <!bold><aqua>" + gamePlayer.getPlayer().getName() + "<white> の違反回数が<aqua>" + gamePlayer.getFlagged() + "<white>回を超えたので、" + GameRole.SEEKER.getColoredName() + "<white> になりました!ww");
-            if (game.canEnd()) {
-                game.end();
-            }
-        }
     }
 
     @EventHandler
@@ -520,7 +483,7 @@ public class GameListener implements Listener {
 
         Block block = player.getLocation().getBlock();
         Block block2Above = player.getLocation().getBlock().getLocation().clone().add(0,-2,0).getBlock();
-        GamePlayer gamePlayer = HideAndSeek.getGamePlayerByPlayer(player);
+        GamePlayer gamePlayer = HideAndSeek.getInstance().getGame().getGamePlayer(player);
 
 
         if (!player.getWorld().equals(Bukkit.getWorld("world")) && HideAndSeek.Instance.getGame().isStarted()) {
@@ -601,7 +564,7 @@ public class GameListener implements Listener {
 
         if (p.getGameMode() != GameMode.CREATIVE) e.setCancelled(true);
 
-        GamePlayer gp = HideAndSeek.getGamePlayerByPlayer(p);
+        GamePlayer gp = HideAndSeek.getInstance().getGame().getGamePlayer(p);
         ClickType click = e.getClick();
 
         for (Menu menu : MenuManager.menus) {
@@ -654,7 +617,11 @@ public class GameListener implements Listener {
         GamePlayer gamePlayer = HideAndSeek.getInstance().getGame().getGamePlayer(player);
 
         if (gamePlayer.previousChat != null && (message.startsWith(gamePlayer.previousChat) || gamePlayer.previousChat.equalsIgnoreCase(message))) {
-            Common.sendMessage(player,Common.text("<red>チャットをスパムしないでください！"));
+            Common.sendMessage(player,
+                    Common.text("<gold><strikethrough>                                         <!strikethrough>"),
+                    Common.text("<red>似たチャットを送信するには <green>VIP <red>ランク以上が必要です!"),
+                    Common.text("<gold><strikethrough>                                         <!strikethrough>")
+            );
             return;
         }
         gamePlayer.previousChat = message;
@@ -665,7 +632,7 @@ public class GameListener implements Listener {
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Common.sendMessage(p,Common.text(Common.convert(gamePlayer.getPrestigeFormat()) + " <gray>" + player.getName() + "<white>: " + message));
+            Common.sendMessage(p,Common.text(Common.convert(gamePlayer.getPrestigeFormat()) + " " + gamePlayer.getRank().getPrefix() + player.getName() + "<white>: " + message));
         }
     }
 
